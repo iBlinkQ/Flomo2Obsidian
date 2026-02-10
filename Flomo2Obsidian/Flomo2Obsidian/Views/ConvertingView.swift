@@ -33,12 +33,24 @@ struct ConvertingView: View {
                     // Animated icon
                     ZStack {
                         Circle()
-                            .fill(Color.blue.opacity(0.1))
+                            .fill(
+                                LinearGradient(
+                                    colors: [.flomoGreen.opacity(0.1), .obsidianPurple.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                             .frame(width: 100, height: 100)
 
                         Image(systemName: "arrow.triangle.2.circlepath")
                             .font(.system(size: 40, weight: .light))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.flomoGreen, .obsidianPurple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                             .rotationEffect(.degrees(rotationAngle))
                     }
                     .onAppear {
@@ -57,7 +69,13 @@ struct ConvertingView: View {
                                 HStack(spacing: 6) {
                                     Text("\(current)")
                                         .font(.system(size: 18, weight: .bold, design: .rounded))
-                                        .foregroundColor(.blue)
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: [.flomoGreen, .obsidianPurple],
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                        )
                                     Text("of")
                                         .font(.system(size: 15, weight: .regular))
                                         .foregroundColor(.secondary)
@@ -69,7 +87,7 @@ struct ConvertingView: View {
                                 if total > 0 {
                                     VStack(spacing: 8) {
                                         ProgressView(value: Double(current), total: Double(total))
-                                            .tint(.blue)
+                                            .tint(.obsidianPurple)
                                             .frame(width: 280)
 
                                         Text("\(Int((Double(current) / Double(total)) * 100))%")

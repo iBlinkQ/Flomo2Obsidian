@@ -36,7 +36,13 @@ struct WelcomeView: View {
                     HStack(spacing: 12) {
                         Image(systemName: "arrow.triangle.2.circlepath")
                             .font(.system(size: 28, weight: .light))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.flomoGreen, .obsidianPurple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                             .rotationEffect(.degrees(isDragging ? 180 : 0))
                             .animation(.spring(response: 0.6, dampingFraction: 0.7), value: isDragging)
 
@@ -67,7 +73,7 @@ struct WelcomeView: View {
                             .fill(
                                 LinearGradient(
                                     colors: isDragging ?
-                                        [Color.blue.opacity(0.15), Color.purple.opacity(0.15)] :
+                                        [Color.flomoGreen.opacity(0.15), Color.obsidianPurple.opacity(0.15)] :
                                         [Color.secondary.opacity(0.04), Color.secondary.opacity(0.08)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
@@ -78,7 +84,7 @@ struct WelcomeView: View {
                                     .strokeBorder(
                                         LinearGradient(
                                             colors: isDragging ?
-                                                [.blue, .purple] :
+                                                [.flomoGreen, .obsidianPurple] :
                                                 [Color.secondary.opacity(0.2), Color.secondary.opacity(0.1)],
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
@@ -87,7 +93,7 @@ struct WelcomeView: View {
                                     )
                             )
                             .shadow(
-                                color: isDragging ? Color.blue.opacity(0.2) : Color.black.opacity(0.03),
+                                color: isDragging ? Color.flomoGreen.opacity(0.2) : Color.black.opacity(0.03),
                                 radius: isDragging ? 20 : 8,
                                 x: 0,
                                 y: isDragging ? 8 : 4
@@ -96,7 +102,19 @@ struct WelcomeView: View {
                         VStack(spacing: 20) {
                             Image(systemName: isDragging ? "arrow.down.doc.fill" : "doc.zipper")
                                 .font(.system(size: 56, weight: .thin))
-                                .foregroundColor(isDragging ? .blue : .secondary)
+                                .foregroundStyle(
+                                    isDragging ?
+                                        LinearGradient(
+                                            colors: [.flomoGreen, .obsidianPurple],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ) :
+                                        LinearGradient(
+                                            colors: [.secondary, .secondary],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                )
                                 .symbolEffect(.bounce, value: isDragging)
                                 .scaleEffect(isDragging ? 1.1 : 1.0)
 
@@ -134,10 +152,17 @@ struct WelcomeView: View {
                         .padding(.vertical, 14)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.blue.opacity(isHovering ? 0.9 : 1.0))
+                                .fill(
+                                    LinearGradient(
+                                        colors: [.flomoGreen, .obsidianPurple],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .opacity(isHovering ? 0.9 : 1.0)
                         )
                         .shadow(
-                            color: Color.blue.opacity(isHovering ? 0.4 : 0.3),
+                            color: Color.obsidianPurple.opacity(isHovering ? 0.4 : 0.3),
                             radius: isHovering ? 12 : 8,
                             x: 0,
                             y: isHovering ? 6 : 4

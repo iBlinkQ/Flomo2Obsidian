@@ -52,7 +52,13 @@ struct PreviewView: View {
             HStack(spacing: 12) {
                 Image(systemName: "doc.text.magnifyingglass")
                     .font(.system(size: 32, weight: .thin))
-                    .foregroundColor(.blue)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.flomoGreen, .obsidianPurple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
 
                 Text("Preview Notes")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -62,7 +68,13 @@ struct PreviewView: View {
             HStack(spacing: 6) {
                 Text("\(dailyNotes.count)")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(.blue)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.flomoGreen, .obsidianPurple],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                 Text("daily notes created")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.secondary)
@@ -100,12 +112,24 @@ struct PreviewView: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(selectedNote?.id == note.id ? Color.blue.opacity(0.2) : Color.secondary.opacity(0.1))
+                        .fill(
+                            selectedNote?.id == note.id ?
+                                LinearGradient(
+                                    colors: [.flomoGreen.opacity(0.2), .obsidianPurple.opacity(0.2)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ) :
+                                LinearGradient(
+                                    colors: [Color.secondary.opacity(0.1), Color.secondary.opacity(0.1)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                        )
                         .frame(width: 36, height: 36)
 
                     Image(systemName: "doc.text.fill")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(selectedNote?.id == note.id ? .blue : .secondary)
+                        .foregroundColor(selectedNote?.id == note.id ? .obsidianPurple : .secondary)
                 }
 
                 Text(note.filename)
@@ -131,14 +155,14 @@ struct PreviewView: View {
             .fill(
                 LinearGradient(
                     colors: isSelected ?
-                        [Color.blue.opacity(0.08), Color.blue.opacity(0.08)] :
+                        [Color.flomoGreen.opacity(0.08), Color.obsidianPurple.opacity(0.08)] :
                         [Color.secondary.opacity(0.04), Color.secondary.opacity(0.06)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             )
             .shadow(
-                color: isSelected ? Color.blue.opacity(0.1) : Color.black.opacity(0.02),
+                color: isSelected ? Color.obsidianPurple.opacity(0.1) : Color.black.opacity(0.02),
                 radius: isSelected ? 8 : 4,
                 x: 0,
                 y: 2
@@ -148,7 +172,17 @@ struct PreviewView: View {
     private func noteRowBorder(isSelected: Bool) -> some View {
         RoundedRectangle(cornerRadius: 12)
             .strokeBorder(
-                isSelected ? Color.blue.opacity(0.3) : Color.clear,
+                isSelected ?
+                    LinearGradient(
+                        colors: [.flomoGreen.opacity(0.3), .obsidianPurple.opacity(0.3)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ) :
+                    LinearGradient(
+                        colors: [.clear, .clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
                 lineWidth: 1
             )
     }
@@ -198,10 +232,17 @@ struct PreviewView: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.blue.opacity(isHoveringExport ? 0.9 : 1.0))
+                        .fill(
+                            LinearGradient(
+                                colors: [.flomoGreen, .obsidianPurple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .opacity(isHoveringExport ? 0.9 : 1.0)
                 )
                 .shadow(
-                    color: Color.blue.opacity(isHoveringExport ? 0.4 : 0.3),
+                    color: Color.obsidianPurple.opacity(isHoveringExport ? 0.4 : 0.3),
                     radius: isHoveringExport ? 12 : 8,
                     x: 0,
                     y: isHoveringExport ? 6 : 4
@@ -237,12 +278,24 @@ struct MarkdownPreviewSheet: View {
                 HStack(spacing: 16) {
                     ZStack {
                         Circle()
-                            .fill(Color.blue.opacity(0.15))
+                            .fill(
+                                LinearGradient(
+                                    colors: [.flomoGreen.opacity(0.15), .obsidianPurple.opacity(0.15)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                             .frame(width: 44, height: 44)
 
                         Image(systemName: "doc.text.fill")
                             .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.flomoGreen, .obsidianPurple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
@@ -323,9 +376,15 @@ struct MarkdownPreviewSheet: View {
                             .padding(.vertical, 12)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.blue)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.flomoGreen, .obsidianPurple],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
                             )
-                            .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                            .shadow(color: Color.obsidianPurple.opacity(0.3), radius: 8, x: 0, y: 4)
                     }
                     .buttonStyle(.plain)
                     .keyboardShortcut(.defaultAction)

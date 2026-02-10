@@ -79,7 +79,13 @@ struct DateRangeView: View {
             HStack(spacing: 12) {
                 Image(systemName: "calendar.badge.clock")
                     .font(.system(size: 32, weight: .thin))
-                    .foregroundColor(.blue)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.flomoGreen, .obsidianPurple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
 
                 Text("Select Date Range")
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -90,7 +96,13 @@ struct DateRangeView: View {
                 HStack(spacing: 6) {
                     Text("\(totalNotes)")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundColor(.blue)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.flomoGreen, .obsidianPurple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                     Text("notes discovered")
                         .font(.system(size: 16, weight: .regular))
                         .foregroundColor(.secondary)
@@ -142,7 +154,7 @@ struct DateRangeView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "calendar.badge.clock")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.flomoGreen)
                     Text("Start Date")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.primary)
@@ -162,7 +174,7 @@ struct DateRangeView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "calendar.badge.checkmark")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.obsidianPurple)
                     Text("End Date")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(.primary)
@@ -188,7 +200,19 @@ struct DateRangeView: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(selectAll ? Color.blue : Color.secondary.opacity(0.2))
+                        .fill(
+                            selectAll ?
+                                LinearGradient(
+                                    colors: [.flomoGreen, .obsidianPurple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ) :
+                                LinearGradient(
+                                    colors: [Color.secondary.opacity(0.2), Color.secondary.opacity(0.2)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                        )
                         .frame(width: 24, height: 24)
 
                     Image(systemName: selectAll ? "checkmark" : "")
@@ -223,7 +247,7 @@ struct DateRangeView: View {
             .fill(
                 LinearGradient(
                     colors: selectAll ?
-                        [Color.blue.opacity(0.08), Color.blue.opacity(0.08)] :
+                        [Color.flomoGreen.opacity(0.08), Color.obsidianPurple.opacity(0.08)] :
                         [Color.secondary.opacity(0.06), Color.secondary.opacity(0.10)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -235,7 +259,17 @@ struct DateRangeView: View {
     private var selectAllBorder: some View {
         RoundedRectangle(cornerRadius: 18)
             .strokeBorder(
-                selectAll ? Color.blue.opacity(0.3) : Color.secondary.opacity(0.15),
+                selectAll ?
+                    LinearGradient(
+                        colors: [.flomoGreen.opacity(0.3), .obsidianPurple.opacity(0.3)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ) :
+                    LinearGradient(
+                        colors: [Color.secondary.opacity(0.15), Color.secondary.opacity(0.15)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
                 lineWidth: 1
             )
     }
@@ -280,10 +314,17 @@ struct DateRangeView: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.blue.opacity(isHoveringConvert ? 0.9 : 1.0))
+                        .fill(
+                            LinearGradient(
+                                colors: [.flomoGreen, .obsidianPurple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .opacity(isHoveringConvert ? 0.9 : 1.0)
                 )
                 .shadow(
-                    color: Color.blue.opacity(isHoveringConvert ? 0.4 : 0.3),
+                    color: Color.obsidianPurple.opacity(isHoveringConvert ? 0.4 : 0.3),
                     radius: isHoveringConvert ? 12 : 8,
                     x: 0,
                     y: isHoveringConvert ? 6 : 4
