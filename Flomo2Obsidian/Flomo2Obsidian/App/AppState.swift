@@ -79,30 +79,25 @@ class AppState: ObservableObject {
             currentScreen = .converting
             error = nil
 
-            do {
-                // Filter notes by date range
-                let filteredNotes = flomoNotes.filter { note in
-                    note.timestamp >= startDate && note.timestamp <= endDate
-                }
-
-                currentProgress = 0
-
-                // Convert to daily notes
-                dailyNotes = markdownConverter.convertToDailyNotes(filteredNotes)
-
-                // Generate markdown for each daily note
-                for (index, dailyNote) in dailyNotes.enumerated() {
-                    let markdown = markdownConverter.generateMarkdown(for: dailyNote)
-                    markdownContents[dailyNote.dateString] = markdown
-                    currentProgress = index + 1
-                }
-
-                isProcessing = false
-                currentScreen = .preview
-            } catch {
-                self.error = error.localizedDescription
-                isProcessing = false
+            // Filter notes by date range
+            let filteredNotes = flomoNotes.filter { note in
+                note.timestamp >= startDate && note.timestamp <= endDate
             }
+
+            currentProgress = 0
+
+            // Convert to daily notes
+            dailyNotes = markdownConverter.convertToDailyNotes(filteredNotes)
+
+            // Generate markdown for each daily note
+            for (index, dailyNote) in dailyNotes.enumerated() {
+                let markdown = markdownConverter.generateMarkdown(for: dailyNote)
+                markdownContents[dailyNote.dateString] = markdown
+                currentProgress = index + 1
+            }
+
+            isProcessing = false
+            currentScreen = .preview
         }
     }
 
