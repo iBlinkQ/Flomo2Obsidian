@@ -10,7 +10,6 @@
 
 [![下载最新版本](https://img.shields.io/github/v/release/iBlinkQ/flomo2obsidian?label=下载&style=for-the-badge&color=00C853)](https://github.com/iBlinkQ/flomo2obsidian/releases/latest)
 
-[功能特性](## 功能特性) • [隐私安全](## 隐私安全) • [安装使用](## 安装使用) • [使用指南](## 使用指南) • [技术栈](## 技术栈)
 
 </div>
 
