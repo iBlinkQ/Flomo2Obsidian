@@ -1,0 +1,55 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- 定义渐变 -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00C853;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3CED;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- 圆角矩形遮罩 -->
+    <clipPath id="roundedCorners">
+      <rect x="0" y="0" width="1024" height="1024" rx="226" ry="226"/>
+    </clipPath>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1024" height="1024" fill="url(#bgGradient)" clip-path="url(#roundedCorners)"/>
+
+  <!-- 左眼 - 笔记图标 (Flomo) -->
+  <g transform="translate(180, 240)">
+    <rect x="0" y="0" width="240" height="300" rx="24" fill="white" opacity="0.95"/>
+    <line x1="40" y1="80" x2="200" y2="80" stroke="#00C853" stroke-width="16" stroke-linecap="round"/>
+    <line x1="40" y1="140" x2="200" y2="140" stroke="#00C853" stroke-width="16" stroke-linecap="round"/>
+    <line x1="40" y1="200" x2="160" y2="200" stroke="#00C853" stroke-width="16" stroke-linecap="round"/>
+  </g>
+
+  <!-- 右眼 - 笔记图标 (Obsidian) -->
+  <g transform="translate(604, 240)">
+    <rect x="0" y="0" width="240" height="300" rx="24" fill="white" opacity="0.95"/>
+    <line x1="40" y1="80" x2="200" y2="80" stroke="#7C3CED" stroke-width="16" stroke-linecap="round"/>
+    <line x1="40" y1="140" x2="200" y2="140" stroke="#7C3CED" stroke-width="16" stroke-linecap="round"/>
+    <line x1="40" y1="200" x2="160" y2="200" stroke="#7C3CED" stroke-width="16" stroke-linecap="round"/>
+    <!-- 小菱形装饰 (Obsidian 标志性元素) -->
+    <path d="M 120 240 L 140 260 L 120 280 L 100 260 Z" fill="#7C3CED" opacity="0.8"/>
+  </g>
+
+  <!-- 微笑曲线 - 转换箭头 -->
+  <g>
+    <!-- 左侧圆点（起点） -->
+    <circle cx="250" cy="680" r="24" fill="white" opacity="0.95"/>
+
+    <!-- 曲线主体 - 缩短一点为箭头留空间 -->
+    <path d="M 250 680 Q 512 820 740 685"
+          stroke="white"
+          stroke-width="32"
+          fill="none"
+          stroke-linecap="round"
+          opacity="0.95"/>
+
+    <!-- 右侧箭头（终点）- 放大并向左上移动 -->
+    <path d="M 830 670 L 730 634 L 730 706 Z"
+          transform="rotate(-25, 780, 670)"
+          fill="white"
+          opacity="0.95"/>
+  </g>
+</svg>

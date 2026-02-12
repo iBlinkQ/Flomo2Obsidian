@@ -8,6 +8,8 @@
 
 🔒 **100% 离线处理 · 数据安全无忧**
 
+[![下载最新版本](https://img.shields.io/github/v/release/你的用户名/flomo2obsidian?label=下载&style=for-the-badge&color=00C853)](https://github.com/你的用户名/flomo2obsidian/releases/latest)
+
 [功能特性](#功能特性) • [隐私安全](#隐私安全) • [安装使用](#安装使用) • [使用指南](#使用指南) • [技术栈](#技术栈)
 
 </div>
@@ -57,7 +59,27 @@ Flomo2Obsidian 是一个完全离线的本地应用，我们深知笔记内容�
 
 1. 下载最新版本的 Flomo2Obsidian.app
 2. 将应用拖入「应用程序」文件夹
-3. 首次打开时，右键点击应用选择「打开」以通过安全检查
+
+### 首次打开应用
+
+由于应用未经过 Apple 公证，macOS 会显示安全警告。请按以下步骤操作：
+
+**方法一：右键打开（推荐）**
+
+1. 右键点击（或按住 Control 点击）Flomo2Obsidian.app
+2. 在菜单中选择「打开」
+3. 在弹出的对话框中再次点击「打开」
+4. 之后可以正常双击启动应用
+
+**方法二：使用终端命令**
+
+在终端中运行以下命令移除隔离属性：
+
+```bash
+xattr -cr /Applications/Flomo2Obsidian.app
+```
+
+> 💡 **说明**：这个安全警告是 macOS Gatekeeper 的保护机制。应用代码完全开源，你可以随时审查源代码以确保安全性。
 
 ## 📖 使用指南
 
