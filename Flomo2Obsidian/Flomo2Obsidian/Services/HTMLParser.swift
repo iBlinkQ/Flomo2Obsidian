@@ -68,12 +68,35 @@ class HTMLParser {
 
     private func extractContent(from element: Element) throws -> String {
         var content = ""
-        let paragraphs = try element.select("p")
 
-        for p in paragraphs {
-            let text = try p.text()
-            if !text.isEmpty {
-                content += text + "\n"
+        for child in element.children() {
+            switch child.tagName() {
+            case "p":
+                let text = try child.text()
+                if !text.isEmpty {
+                    content += text + "\n"
+                }
+            case "ol":
+                let items = try child.select("li")
+                for (index, item) in items.enumerated() {
+                    let text = try item.text()
+                    if !text.isEmpty {
+                        content += "\(index + 1). \(text)\n"
+                    }
+                }
+            case "ul":
+                let items = try child.select("li")
+                for item in items {
+                    let text = try item.text()
+                    if !text.isEmpty {
+                        content += "- \(text)\n"
+                    }
+                }
+            default:
+                let text = try child.text()
+                if !text.isEmpty {
+                    content += text + "\n"
+                }
             }
         }
 

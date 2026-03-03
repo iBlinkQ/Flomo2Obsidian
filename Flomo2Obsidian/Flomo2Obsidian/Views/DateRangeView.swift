@@ -15,6 +15,7 @@ struct DateRangeView: View {
     @Binding var startDate: Date
     @Binding var endDate: Date
     @Binding var selectAll: Bool
+    @Binding var exportGranularity: ExportGranularity
 
     let onCancel: () -> Void
     let onConvert: () -> Void
@@ -50,6 +51,7 @@ struct DateRangeView: View {
     private var mainCard: some View {
         VStack(spacing: 32) {
             headerSection
+            granularityPickerSection
             dateSelectionSection
         }
         .padding(40)
@@ -113,6 +115,67 @@ struct DateRangeView: View {
                     .foregroundColor(.secondary.opacity(0.8))
                     .tracking(0.2)
             }
+        }
+    }
+
+    private var granularityPickerSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 10) {
+                Image(systemName: "square.grid.2x2")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.flomoGreen, .obsidianPurple],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                Text("Export Granularity")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.primary)
+            }
+
+            Picker("", selection: $exportGranularity) {
+                ForEach(ExportGranularity.allCases, id: \.self) { granularity in
+                    Text(granularity.rawValue)
+                        .tag(granularity)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 264)
+
+            Text(granularityHelpText)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundColor(.secondary)
+        }
+        .padding(28)
+        .frame(width: 320)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.secondary.opacity(0.06),
+                            Color.secondary.opacity(0.10)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(Color.secondary.opacity(0.15), lineWidth: 1)
+        )
+    }
+
+    private var granularityHelpText: String {
+        switch exportGranularity {
+        case .perDay:
+            return "同一天的笔记合并为一个文件"
+        case .perCard:
+            return "每条笔记导出为独立文件"
         }
     }
 

@@ -10,10 +10,10 @@ import ZIPFoundation
 
 class ZipGenerator {
 
-    func createZip(dailyNotes: [DailyNote], markdownContents: [String: String], attachmentsDir: URL?) throws -> URL {
+    func createZip(exportItems: [ExportItem], markdownContents: [String: String], attachmentsDir: URL?) throws -> URL {
         let tempDir = createTempDirectory()
 
-        try writeMarkdownFiles(dailyNotes, contents: markdownContents, to: tempDir)
+        try writeExportItemFiles(exportItems, contents: markdownContents, to: tempDir)
 
         if let attachmentsDir = attachmentsDir {
             try copyAttachmentsDirectory(from: attachmentsDir, to: tempDir)
@@ -30,10 +30,10 @@ class ZipGenerator {
         return tempDir
     }
 
-    private func writeMarkdownFiles(_ notes: [DailyNote], contents: [String: String], to directory: URL) throws {
-        for note in notes {
-            let fileURL = directory.appendingPathComponent(note.filename)
-            if let content = contents[note.dateString] {
+    private func writeExportItemFiles(_ items: [ExportItem], contents: [String: String], to directory: URL) throws {
+        for item in items {
+            let fileURL = directory.appendingPathComponent(item.filename)
+            if let content = contents[item.contentKey] {
                 try content.write(to: fileURL, atomically: true, encoding: .utf8)
             }
         }

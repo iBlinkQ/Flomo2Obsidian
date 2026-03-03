@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct PreviewView: View {
-    let dailyNotes: [DailyNote]
+    let notes: [ExportItem]
     let markdownContents: [String: String]
 
-    @State private var selectedNote: DailyNote?
+    let isExporting: Bool
+
+    @State private var selectedNote: ExportItem?
     @State private var isHoveringBack = false
     @State private var isHoveringExport = false
 
@@ -31,7 +33,7 @@ struct PreviewView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(item: $selectedNote) { note in
-            MarkdownPreviewSheet(note: note, content: markdownContents[note.dateString] ?? "")
+            MarkdownPreviewSheet(note: note, content: markdownContents[note.contentKey] ?? "")
         }
     }
 
@@ -66,7 +68,7 @@ struct PreviewView: View {
             }
 
             HStack(spacing: 6) {
-                Text("\(dailyNotes.count)")
+                Text("\(notes.count)")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -75,7 +77,7 @@ struct PreviewView: View {
                             endPoint: .trailing
                         )
                     )
-                Text("daily notes created")
+                Text("notes created")
                     .font(.system(size: 15, weight: .regular))
                     .foregroundColor(.secondary)
             }
@@ -85,7 +87,7 @@ struct PreviewView: View {
     private var notesListSection: some View {
         ScrollView {
             VStack(spacing: 10) {
-                ForEach(dailyNotes) { note in
+                ForEach(notes) { note in
                     noteRow(for: note)
                 }
             }
@@ -103,7 +105,7 @@ struct PreviewView: View {
         )
     }
 
-    private func noteRow(for note: DailyNote) -> some View {
+    private func noteRow(for note: ExportItem) -> some View {
         Button(action: {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectedNote = note
@@ -132,9 +134,10 @@ struct PreviewView: View {
                         .foregroundColor(selectedNote?.id == note.id ? .obsidianPurple : .secondary)
                 }
 
-                Text(note.filename)
+                Text(note.displayName)
                     .font(.system(size: 14, weight: selectedNote?.id == note.id ? .semibold : .regular, design: .monospaced))
                     .foregroundColor(selectedNote?.id == note.id ? .primary : .secondary)
+                    .lineLimit(1)
 
                 Spacer()
 
@@ -220,12 +223,22 @@ struct PreviewView: View {
 
             Button(action: onExport) {
                 HStack(spacing: 10) {
-                    Text("Export to Obsidian")
-                        .font(.system(size: 15, weight: .semibold))
-                        .tracking(0.2)
+                    if isExporting {
+                        ProgressView()
+                            .controlSize(.small)
+                            .colorScheme(.dark)
 
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 13, weight: .semibold))
+                        Text("Exporting...")
+                            .font(.system(size: 15, weight: .semibold))
+                            .tracking(0.2)
+                    } else {
+                        Text("Export to Obsidian")
+                            .font(.system(size: 15, weight: .semibold))
+                            .tracking(0.2)
+
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 13, weight: .semibold))
+                    }
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 28)
@@ -239,7 +252,7 @@ struct PreviewView: View {
                                 endPoint: .trailing
                             )
                         )
-                        .opacity(isHoveringExport ? 0.9 : 1.0)
+                        .opacity(isExporting ? 0.7 : (isHoveringExport ? 0.9 : 1.0))
                 )
                 .shadow(
                     color: Color.obsidianPurple.opacity(isHoveringExport ? 0.4 : 0.3),
@@ -250,6 +263,7 @@ struct PreviewView: View {
                 .scaleEffect(isHoveringExport ? 1.02 : 1.0)
             }
             .buttonStyle(.plain)
+            .disabled(isExporting)
             .onHover { hovering in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     isHoveringExport = hovering
@@ -261,7 +275,7 @@ struct PreviewView: View {
 }
 
 struct MarkdownPreviewSheet: View {
-    let note: DailyNote
+    let note: ExportItem
     let content: String
 
     @Environment(\.dismiss) private var dismiss
@@ -299,9 +313,10 @@ struct MarkdownPreviewSheet: View {
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(note.filename)
+                        Text(note.displayName)
                             .font(.system(size: 18, weight: .bold, design: .monospaced))
                             .foregroundColor(.primary)
+                            .lineLimit(1)
 
                         Text("Markdown Preview")
                             .font(.system(size: 12, weight: .regular))

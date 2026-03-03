@@ -36,6 +36,12 @@ struct ContentView: View {
     @State private var endDate = Date()
     @State private var selectAll = true
 
+    private var exportFilename: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return "obsidian-notes-\(formatter.string(from: Date())).zip"
+    }
+
     var body: some View {
         ZStack {
             switch appState.currentScreen {
@@ -56,6 +62,7 @@ struct ContentView: View {
                         startDate: $startDate,
                         endDate: $endDate,
                         selectAll: $selectAll,
+                        exportGranularity: $appState.exportGranularity,
                         onCancel: {
                             appState.reset()
                         },
@@ -72,13 +79,14 @@ struct ContentView: View {
             case .converting:
                 ConvertingView(
                     currentProgress: appState.currentProgress,
-                    totalNotes: appState.dailyNotes.count
+                    totalNotes: appState.exportItems.count
                 )
 
             case .preview:
                 PreviewView(
-                    dailyNotes: appState.dailyNotes,
+                    notes: appState.exportItems,
                     markdownContents: appState.markdownContents,
+                    isExporting: appState.isProcessing,
                     onBack: {
                         appState.currentScreen = .dateRange
                     },
@@ -97,7 +105,7 @@ struct ContentView: View {
                 try? ExportDocument(url: url)
             },
             contentType: .zip,
-            defaultFilename: "obsidian-notes.zip"
+            defaultFilename: exportFilename
         ) { result in
             switch result {
             case .success:

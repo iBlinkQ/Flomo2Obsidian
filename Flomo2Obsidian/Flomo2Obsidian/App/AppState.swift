@@ -22,6 +22,8 @@ class AppState: ObservableObject {
     @Published var currentProgress: Int = 0
     @Published var showingExporter = false
     @Published var exportURL: URL?
+    @Published var exportGranularity: ExportGranularity = .perDay
+    @Published var exportItems: [ExportItem] = []
 
     private let fileHandler = FileHandler()
     private let htmlParser = HTMLParser()
@@ -85,15 +87,26 @@ class AppState: ObservableObject {
             }
 
             currentProgress = 0
+            markdownContents = [:]
 
-            // Convert to daily notes
-            dailyNotes = markdownConverter.convertToDailyNotes(filteredNotes)
+            switch exportGranularity {
+            case .perDay:
+                // Convert to daily notes
+                dailyNotes = markdownConverter.convertToDailyNotes(filteredNotes)
+                exportItems = markdownConverter.convertToDailyExportItems(dailyNotes)
 
-            // Generate markdown for each daily note
-            for (index, dailyNote) in dailyNotes.enumerated() {
-                let markdown = markdownConverter.generateMarkdown(for: dailyNote)
-                markdownContents[dailyNote.dateString] = markdown
-                currentProgress = index + 1
+                // Generate markdown for each daily note
+                for (index, dailyNote) in dailyNotes.enumerated() {
+                    let markdown = markdownConverter.generateMarkdown(for: dailyNote)
+                    markdownContents[dailyNote.dateString] = markdown
+                    currentProgress = index + 1
+                }
+
+            case .perCard:
+                let (items, contents) = markdownConverter.convertToCardExportItems(filteredNotes)
+                exportItems = items
+                markdownContents = contents
+                currentProgress = items.count
             }
 
             isProcessing = false
@@ -128,7 +141,7 @@ class AppState: ObservableObject {
 
                 // Create zip
                 let zipURL = try self.zipGenerator.createZip(
-                    dailyNotes: self.dailyNotes,
+                    exportItems: self.exportItems,
                     markdownContents: self.markdownContents,
                     attachmentsDir: attachmentsDir
                 )
@@ -158,6 +171,7 @@ class AppState: ObservableObject {
         flomoNotes = []
         dailyNotes = []
         markdownContents = [:]
+        exportItems = []
         dateRange = nil
         currentProgress = 0
 
