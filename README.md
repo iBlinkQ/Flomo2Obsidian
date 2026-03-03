@@ -10,7 +10,7 @@
 
 [![下载最新版本](https://img.shields.io/github/v/release/iBlinkQ/flomo2obsidian?label=下载&style=for-the-badge&color=00C853)](https://github.com/iBlinkQ/flomo2obsidian/releases/latest)
 <img width="1800" height="1504" alt="e006d184bbfa9b03f8a22a85415c902d" src="https://github.com/user-attachments/assets/3df5e7ca-de3f-487e-8f9c-1c495e2bd147" />
-<img width="900" height="752" alt="Xnip2026-03-03_12-21-05" src="https://github.com/user-attachments/assets/6c7e67ed-dedd-4eae-b4b2-257355e88972" />
+<img width="900" height="752" alt="image" src="https://github.com/user-attachments/assets/ed31af60-2893-49e4-b0e3-35f2669328c5" />
 
 </div>
 
