@@ -37,9 +37,9 @@ class MarkdownConverter {
         markdown += "---\n\n"
 
         for (index, note) in dailyNote.notes.enumerated() {
-            // Extract first line as heading, truncate at 20 chars
-            let firstLine = note.firstLine
-            let heading = firstLine.count > 20 ? String(firstLine.prefix(20)) + "..." : firstLine
+            // Extract first line as heading, strip tag hashes and truncate at 20 chars
+            let firstLine = stripTagHashes(note.firstLine)
+            let heading = firstLine.count > 20 ? String(firstLine.prefix(20)) + "…" : firstLine
 
             // Add heading
             markdown += "# \(heading)\n\n"
@@ -142,7 +142,7 @@ class MarkdownConverter {
     // MARK: - Filename Helpers
 
     private func sanitizeFilename(_ firstLine: String, timestamp: Date) -> String {
-        var name = firstLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        var name = stripTagHashes(firstLine).trimmingCharacters(in: .whitespacesAndNewlines)
 
         if name.isEmpty {
             let formatter = DateFormatter()
@@ -151,9 +151,9 @@ class MarkdownConverter {
             return "无标题 \(formatter.string(from: timestamp))"
         }
 
-        // Truncate to 20 characters
+        // Truncate to 20 characters (Obsidian uses filename as note title)
         if name.count > 20 {
-            name = String(name.prefix(20))
+            name = String(name.prefix(20)) + "…"
         }
 
         // Replace invalid filename characters
@@ -164,7 +164,7 @@ class MarkdownConverter {
     }
 
     private func truncateForDisplay(_ firstLine: String, timestamp: Date) -> String {
-        let name = firstLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = stripTagHashes(firstLine).trimmingCharacters(in: .whitespacesAndNewlines)
 
         if name.isEmpty {
             let formatter = DateFormatter()
@@ -174,9 +174,25 @@ class MarkdownConverter {
         }
 
         if name.count > 20 {
-            return String(name.prefix(20)) + "..."
+            return String(name.prefix(20)) + "…"
         }
 
         return name
+    }
+
+    // MARK: - Tag Helpers
+
+    /// Remove # from Flomo-style tags in title text.
+    /// e.g. "#知识管理 后续内容" → "知识管理 后续内容"
+    private func stripTagHashes(_ text: String) -> String {
+        // Match # followed by non-whitespace characters (Flomo tag pattern)
+        // Handles cases like "#标签", "#知识管理", "#tag/subtag"
+        let pattern = "#(\\S+)"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return text }
+        return regex.stringByReplacingMatches(
+            in: text,
+            range: NSRange(text.startIndex..., in: text),
+            withTemplate: "$1"
+        )
     }
 }
