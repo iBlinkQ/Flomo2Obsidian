@@ -49,7 +49,7 @@ Flomo2Obsidian/
    - Language: Swift
    - 取消勾选 "Use Core Data"
    - 取消勾选 "Include Tests"
-5. 选择保存位置（选择 `/Users/blinkq/flomo2obsidian`）
+5. 选择保存位置（选择项目所在的文件夹）
 
 ### 2. 添加依赖库
 
@@ -194,7 +194,7 @@ Flomo2Obsidian/
    - 导入代码文件
 
 2. **测试应用**
-   - 使用提供的 flomo@Blink-20260209.zip 测试
+   - 使用 Flomo 导出的 ZIP 文件进行测试
    - 验证转换结果
    - 检查 Markdown 格式
 
