@@ -1,114 +1,114 @@
-# Flomo to Obsidian Converter - Project Specification
+# Flomo 转 Obsidian 转换器 - 项目规格说明
 
-## Project Overview
+## 项目概述
 
-A lightweight macOS desktop application that converts Flomo note exports into Obsidian-compatible Markdown format.
+一个轻量级的 macOS 桌面应用程序，用于将 Flomo 笔记导出文件转换为兼容 Obsidian 的 Markdown 格式。
 
-**Key Principles:**
-- Offline-only operation
-- Lightweight and fast startup
-- Simple, clean UI (avoid blue-purple gradients)
-- Native macOS experience
+**核心原则：**
+- 仅限离线操作
+- 轻量级且启动快速
+- 简单、整洁的 UI（避免蓝紫色渐变）
+- 原生 macOS 体验
 
-## Technology Stack
+## 技术栈
 
-**Platform:** Swift + SwiftUI (Native macOS)
+**平台：** Swift + SwiftUI (原生 macOS)
 
-**Rationale:**
-- Smallest app size and best performance
-- Native macOS look and feel
-- Fast startup time
-- Direct access to system APIs
+**理论依据：**
+- 最小的应用体积和最佳性能
+- 原生 macOS 外观和感觉
+- 快速启动时间
+- 直接访问系统 API
 
-## Core Features
+## 核心功能
 
-### 1. File Upload
-- Drag & drop support for .zip files
-- File picker dialog as alternative
-- Validate file is a Flomo export
+### 1. 文件上传
+- 支持 .zip 文件的拖放
+- 文件选择器对话框作为备选
+- 校验文件是否为 Flomo 导出文件
 
-### 2. Date Range Selection
-- Parse all notes to extract date range
-- Display date range to user (earliest to latest)
-- Allow user to select custom date range
-- Default: select all dates
-- Show loading animation during parsing
+### 2. 日期范围选择
+- 解析所有笔记以提取日期范围
+- 向用户显示日期范围（最早到最晚）
+- 允许用户选择自定义日期范围
+- 默认值：选择所有日期
+- 解析过程中显示加载动画
 
-### 3. Conversion Process
-- Convert selected notes to daily markdown files
-- Show loading animation during conversion
-- Progress indicator if possible
+### 3. 转换过程
+- 将选定的笔记转换为每日 Markdown 文件
+- 转换过程中显示加载动画
+- 如果可能，显示进度指示器
 
-### 4. Preview (Before Download)
-- Show list of generated daily notes
-- Allow user to preview markdown content
-- Display file count and date range summary
+### 4. 预览（下载前）
+- 显示生成的每日笔记列表
+- 允许用户预览 Markdown 内容
+- 显示文件数量和日期范围摘要
 
-### 5. Export
-- Generate zip file with converted notes
-- Save dialog for user to choose location
-- Zip structure:
-  - Daily notes at root (YYYY-MM-DD.md)
-  - Attachments/ folder with all images
+### 5. 导出
+- 生成包含转换后笔记的 zip 文件
+- 保存对话框供用户选择位置
+- Zip 结构：
+  - 根目录下为每日笔记 (YYYY-MM-DD.md)
+  - Attachments/ 文件夹包含所有图片
 
-## Conversion Rules
+## 转换规则
 
-### Daily Note Format
-- Filename: `YYYY-MM-DD.md` (e.g., `2026-02-04.md`)
-- One file per day
-- Multiple Flomo notes from same day merged into one file
-- Notes sorted by creation time (earliest first)
+### 每日笔记格式
+- 文件名：`YYYY-MM-DD.md`（例如：`2026-02-04.md`）
+- 每天一个文件
+- 同一天的多条 Flomo 笔记合并为一个文件
+- 笔记按创建时间排序（最早的在前）
 
-### Note Structure
+### 笔记结构
 ```markdown
-# First line of Flomo note becomes H1 heading
+# Flomo 笔记的第一行变为 H1 标题
 
-Rest of the note content here...
+笔记内容的其余部分在这里...
 
 ![](Attachments/image.png)
 
 ---
 
-# Next note's first line
+# 下一条笔记的第一行
 
-Content of second note...
+第二条笔记的内容...
 ```
 
-### Content Transformation
-1. **First line → H1 heading**: Extract first line, convert to `# Heading`
-2. **Tags**: Keep as-is (e.g., `#知识管理`, `#AI洞见`)
-3. **Images**:
-   - Move to end of note content
-   - Use relative path: `![](Attachments/filename.png)`
-   - Preserve original filenames
-4. **Separators**: Add `---` between notes from same day
+### 内容转换策略
+1. **第一行 → H1 标题**：提取第一行，转换为 `# 标题`
+2. **标签**：保持不变（例如：`#知识管理`, `#AI洞见`）
+3. **图片**：
+   - 移动到笔记内容末尾
+   - 使用相对路径：`![](Attachments/filename.png)`
+   - 保留原始文件名
+4. **分隔符**：在同一天的笔记之间添加 `---`
 
-### Attachment Handling
-- All images moved to `Attachments/` folder (flat structure)
-- Preserve original filenames
-- Handle duplicate filenames (append number if needed)
-- Update image references in markdown
+### 附件处理
+- 所有图片移动到 `Attachments/` 文件夹（扁平结构）
+- 保留原始文件名
+- 处理重复文件名（根据需要追加数字）
+- 更新 Markdown 中的图片引用
 
-## Flomo Export Structure
+## Flomo 导出结构
 
-**Input Format:**
+**输入格式：**
 ```
 flomo@Username-YYYYMMDD.zip
-├── Username的笔记.html          # Contains all note content
-└── file/                        # Attachments folder
+├── Username的笔记.html          # 包含所有笔记内容
+└── file/                        # 附件文件夹
     ├── YYYY-MM-DD/
     │   └── 101/
-    │       └── [image files]
+    │       └── [图片文件]
     └── ...
 ```
 
-**HTML Structure:**
+**HTML 结构：**
 ```html
 <div class="memo">
   <div class="time">2026-01-30 15:38:14</div>
   <div class="content">
-    <p>First line becomes heading</p>
-    <p>Rest of content...</p>
+    <p>第一行变为标题</p>
+    <p>内容的其余部分...</p>
   </div>
   <div class="files">
     <img src="file/2026-01-28/101/image.png" />
@@ -116,103 +116,103 @@ flomo@Username-YYYYMMDD.zip
 </div>
 ```
 
-## UI/UX Design
+## UI/UX 设计
 
-### Design Principles
-- **Minimalist**: Clean, uncluttered interface
-- **Native**: Follow macOS Human Interface Guidelines
-- **Fast**: Instant feedback, smooth animations
-- **Clear**: Obvious next steps at each stage
+### 设计原则
+- **极简主义**：简洁、清爽的界面
+- **原生**：遵循 macOS 人机界面指南 (Human Interface Guidelines)
+- **快速**：即时反馈，流畅动画
+- **清晰**：每个阶段都有明显的操作步骤
 
-### Color Palette
-- **Primary**: System accent color (user's preference)
-- **Background**: System background (light/dark mode support)
-- **Text**: System text colors
-- **Avoid**: Blue-purple gradients
-- **Use**: Subtle grays, system colors, minimal decoration
+### 配色方案
+- **主色**：系统强调色 (Accent color)
+- **背景**：系统背景色（支持浅色/深色模式）
+- **文本**：系统文本颜色
+- **避免**：蓝紫色渐变
+- **使用**：微妙的灰色、系统颜色、最少的装饰
 
-### App Flow
+### 应用流程
 ```
-1. Welcome Screen
-   ↓ (Drag & Drop or Select File)
-2. Date Range Selection
-   ↓ (Confirm)
-3. Converting... (Loading)
+1. 欢迎界面
+   ↓ (拖放或选择文件)
+2. 日期范围选择
+   ↓ (确认)
+3. 转换中... (加载)
    ↓
-4. Preview Screen
-   ↓ (Export)
-5. Save Dialog
+4. 预览界面
+   ↓ (导出)
+5. 保存对话框
    ↓
-6. Success / Return to Start
+6. 成功 / 返回开始
 ```
 
-### Screen Designs
+### 界面设计
 
-#### 1. Welcome Screen
-- Large drop zone in center
-- Text: "Drop Flomo export here or click to select"
-- Small icon (document/folder)
-- "Select File" button below
-- Minimal, centered layout
+#### 1. 欢迎界面
+- 居中显示的大型投放区域
+- 文本：“将 Flomo 导出文件拖放到此处或点击选择”
+- 小图标（文档/文件夹）
+- 下方显示“选择文件”按钮
+- 极简、居中的布局
 
-#### 2. Date Range Selection
-- Title: "Select Date Range"
-- Display: "Found X notes from [earliest] to [latest]"
-- Date pickers: Start Date | End Date
-- "Select All" checkbox (default: checked)
-- Loading spinner during parsing
-- "Cancel" and "Convert" buttons
+#### 2. 日期范围选择
+- 标题：“选择日期范围”
+- 显示：“在 [最早] 到 [最晚] 期间发现 X 条笔记”
+- 日期选择器：开始日期 | 结束日期
+- “全选”复选框（默认：选中）
+- 解析期间显示加载旋转器
+- “取消”和“转换”按钮
 
-#### 3. Converting Screen
-- Progress indicator (spinner or progress bar)
-- Text: "Converting notes..."
-- Optional: "X of Y notes processed"
-- Clean, centered layout
+#### 3. 转换界面
+- 进度指示器（旋转器或进度条）
+- 文本：“正在转换笔记...”
+- 可选：“已处理 Y 条笔记中的 X 条”
+- 简洁、居中的布局
 
-#### 4. Preview Screen
-- Title: "Preview Converted Notes"
-- Summary: "X daily notes created (YYYY-MM-DD to YYYY-MM-DD)"
-- List of daily note files (scrollable)
-- Click to preview markdown content
-- "Back" and "Export" buttons
+#### 4. 预览界面
+- 标题：“预览转换后的笔记”
+- 摘要：“已创建 X 条每日笔记 (YYYY-MM-DD 到 YYYY-MM-DD)”
+- 每日笔记文件列表（可滚动）
+- 点击预览 Markdown 内容
+- “返回”和“导出”按钮
 
-## Technical Architecture
+## 技术架构
 
-### Core Components
+### 核心组件
 
 1. **FileHandler**
-   - Validate zip file
-   - Extract and parse HTML
-   - Extract attachments
-   - Handle file I/O
+   - 验证 zip 文件
+   - 解压并解析 HTML
+   - 提取附件
+   - 处理文件 I/O
 
 2. **HTMLParser**
-   - Parse Flomo HTML structure
-   - Extract memo data (time, content, images)
-   - Handle Chinese encoding
+   - 解析 Flomo HTML 结构
+   - 提取 memo 数据（时间、内容、图片）
+   - 处理中文编码
 
 3. **DateRangeManager**
-   - Extract date range from notes
-   - Filter notes by date range
-   - Sort notes by timestamp
+   - 从笔记中提取日期范围
+   - 按日期范围过滤笔记
+   - 按时间戳排序笔记
 
 4. **MarkdownConverter**
-   - Convert HTML content to Markdown
-   - Extract first line as H1 heading
-   - Handle tags, formatting
-   - Generate daily note files
+   - 将 HTML 内容转换为 Markdown
+   - 提取第一行作为 H1 标题
+   - 处理标签、格式
+   - 生成每日笔记文件
 
 5. **AttachmentManager**
-   - Copy images to Attachments folder
-   - Handle filename conflicts
-   - Update image references
+   - 将图片复制到 Attachments 文件夹
+   - 处理文件名冲突
+   - 更新图片引用
 
 6. **ZipGenerator**
-   - Create output zip structure
-   - Package daily notes and attachments
-   - Generate final export file
+   - 创建输出 zip 结构
+   - 打包每日笔记和附件
+   - 生成最终导出文件
 
-### Data Models
+### 数据模型
 
 ```swift
 struct FlomoNote {
@@ -228,97 +228,97 @@ struct DailyNote {
 }
 ```
 
-### Processing Flow
+### 处理流程
 
 ```
-1. User drops zip file
+1. 用户拖入 zip 文件
    ↓
-2. Extract zip to temp directory
+2. 将 zip 解压到临时目录
    ↓
-3. Parse HTML file
+3. 解析 HTML 文件
    ↓
-4. Extract all FlomoNote objects
+4. 提取所有 FlomoNote 对象
    ↓
-5. Determine date range
+5. 确定日期范围
    ↓
-6. User selects date range
+6. 用户选择日期范围
    ↓
-7. Filter notes by date range
+7. 按日期范围过滤笔记
    ↓
-8. Group notes by date
+8. 按日期分组笔记
    ↓
-9. Convert to DailyNote objects
+9. 转换为 DailyNote 对象
    ↓
-10. Generate markdown for each day
+10. 为每一天生成 Markdown
    ↓
-11. Copy attachments to Attachments/
+11. 将附件复制到 Attachments/
    ↓
-12. Create output zip
+12. 创建输出 zip
    ↓
-13. Present to user for download
+13. 呈现给用户进行下载
 ```
 
-## Implementation Considerations
+## 实现注意事项
 
-### Error Handling
-- Invalid zip file format
-- Missing HTML file
-- Corrupted HTML structure
-- Missing attachments
-- Disk space issues
-- File permission errors
+### 错误处理
+- 无效的 zip 文件格式
+- 缺少 HTML 文件
+- HTML 结构损坏
+- 缺少附件
+- 磁盘空间问题
+- 文件权限错误
 
-### Performance Optimization
-- Parse HTML asynchronously
-- Show progress during conversion
-- Use background threads for file operations
-- Lazy loading for preview
+### 性能优化
+- 异步解析 HTML
+- 转换期间显示进度
+- 使用后台线程进行文件操作
+- 预览使用延迟加载
 
-### Testing Strategy
-- Test with various Flomo export sizes
-- Test with Chinese characters
-- Test with missing attachments
-- Test date range edge cases
-- Test with corrupted HTML
+### 测试策略
+- 使用各种规模的 Flomo 导出文件进行测试
+- 使用中文字符进行测试
+- 使用缺失附件的情况进行测试
+- 测试日期范围的各种边界情况
+- 使用损坏的 HTML 进行测试
 
-## Development Phases
+## 开发阶段
 
-### Phase 1: Core Parsing (Week 1)
-- Set up Swift project
-- Implement FileHandler
-- Implement HTMLParser
-- Test with sample Flomo export
+### 阶段 1：核心解析（第 1 周）
+- 搭建 Swift 项目
+- 实现 FileHandler
+- 实现 HTMLParser
+- 使用 Flomo 导出示例进行测试
 
-### Phase 2: Conversion Logic (Week 1-2)
-- Implement MarkdownConverter
-- Implement AttachmentManager
-- Test conversion accuracy
+### 阶段 2：转换逻辑（第 1-2 周）
+- 实现 MarkdownConverter
+- 实现 AttachmentManager
+- 测试转换准确性
 
-### Phase 3: UI Development (Week 2)
-- Build Welcome screen
-- Build Date Range Selection screen
-- Build Converting screen
-- Build Preview screen
+### 阶段 3：UI 开发（第 2 周）
+- 构建欢迎界面
+- 构建日期范围选择界面
+- 构建转换界面
+- 构建预览界面
 
-### Phase 4: Integration & Polish (Week 3)
-- Connect UI to backend
-- Add loading animations
-- Error handling
-- Testing and bug fixes
+### 阶段 4：集成与完善（第 3 周）
+- 将 UI 连接到后端
+- 添加加载动画
+- 错误处理
+- 测试和 Bug 修复
 
-### Phase 5: Packaging (Week 3)
-- App icon and branding
-- Build for distribution
-- User testing
-- Documentation
+### 阶段 5：打包（第 3 周）
+- 应用图标和品牌推广
+- 发布版本构建
+- 用户测试
+- 文档编写
 
-## Example Output
+## 输出示例
 
-### Input: Flomo Export
-- 50 notes from 2025-12-28 to 2026-01-30
-- 15 images attached
+### 输入：Flomo 导出文件
+- 从 2025-12-28 到 2026-01-30 的 50 条笔记
+- 附带 15 张图片
 
-### Output: Obsidian-ready Zip
+### 输出：适用于 Obsidian 的 Zip 文件
 ```
 obsidian-notes.zip
 ├── 2025-12-28.md
@@ -336,13 +336,13 @@ obsidian-notes.zip
     └── ...
 ```
 
-### Sample Daily Note (2026-01-30.md)
+### 每日笔记示例 (2026-01-30.md)
 ```markdown
 # 知识管理 学习的蔓延成本
 
-最近系统学习AI 编程，这是一个充满大量成熟知识与习新知识的陌生世界。
+最近系统学习 AI 编程，这是一个充满大量成熟知识与新知识的陌生世界。
 
-有时候希望学一个A点，但过程中发现有一个B点，认为也是需要掌握的，就可能去探索B点，然后花费了很多时间（花费时间多可能意味着探索比较成功），就比预期学习 A 点用了更多时间，但好处是你掌握了 A+B，甚至更多。
+有时候希望学一个 A 点，但过程中发现有一个 B 点，认为也是需要掌握的，就可能去探索 B 点，然后花费了很多时间（花费时间多可能意味着探索比较成功），就比预期学习 A 点用了更多时间，但好处是你掌握了 A+B，甚至更多。
 
 这既可能带来兴奋，也可能带来疲惫。
 
@@ -354,12 +354,12 @@ obsidian-notes.zip
 
 #AI洞见
 
-那种因为被B点吸引而花费的额外时间，如果促使你完成了深刻的连接，它就不是成本，而是高价值的「必要难度」投资。
+那种因为被 B 点吸引而花费的额外时间，如果促使你完成了深刻的连接，它就不是成本，而是高价值的「必要难度」投资。
 ```
 
-## Next Steps
+## 下一步
 
-1. Review and approve this specification
-2. Set up Xcode project
-3. Begin Phase 1 development
-4. Iterate based on testing feedback
+1. 审查并批准此规格说明
+2. 设置 Xcode 项目
+3. 开始第 1 阶段开发
+4. 根据测试反馈进行迭代

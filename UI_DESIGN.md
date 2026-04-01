@@ -1,130 +1,130 @@
-# Flomo to Obsidian Converter - UI Design
+# Flomo 转 Obsidian 转换器 - UI 设计
 
-## Design System
+## 设计系统
 
-### Typography
-- **Title**: SF Pro Display, 24pt, Semibold
-- **Heading**: SF Pro Text, 18pt, Medium
-- **Body**: SF Pro Text, 14pt, Regular
-- **Caption**: SF Pro Text, 12pt, Regular
+### 字体
+- **标题**: SF Pro Display, 24pt, Semibold
+- **二级标题**: SF Pro Text, 18pt, Medium
+- **正文**: SF Pro Text, 14pt, Regular
+- **说明文字**: SF Pro Text, 12pt, Regular
 
-### Spacing
-- **XS**: 4px
-- **S**: 8px
-- **M**: 16px
-- **L**: 24px
-- **XL**: 32px
-- **XXL**: 48px
+### 间距
+- **极小 (XS)**: 4px
+- **小 (S)**: 8px
+- **中 (M)**: 16px
+- **大 (L)**: 24px
+- **极大 (XL)**: 32px
+- **巨大 (XXL)**: 48px
 
-### Colors (Light Mode)
-- **Background**: #FFFFFF
-- **Secondary Background**: #F5F5F7
-- **Text Primary**: #1D1D1F
-- **Text Secondary**: #86868B
-- **Border**: #D2D2D7
-- **Accent**: System Accent (user preference)
+### 颜色（浅色模式）
+- **背景**: #FFFFFF
+- **二级背景**: #F5F5F7
+- **一级文本**: #1D1D1F
+- **二级文本**: #86868B
+- **边框**: #D2D2D7
+- **强调色**: 系统强调色（根据用户偏好）
 
-### Colors (Dark Mode)
-- **Background**: #1C1C1E
-- **Secondary Background**: #2C2C2E
-- **Text Primary**: #F5F5F7
-- **Text Secondary**: #98989D
-- **Border**: #38383A
-- **Accent**: System Accent (user preference)
+### 颜色（深色模式）
+- **背景**: #1C1C1E
+- **二级背景**: #2C2C2E
+- **一级文本**: #F5F5F7
+- **二级文本**: #98989D
+- **边框**: #38383A
+- **强调色**: 系统强调色（根据用户偏好）
 
-## Screen 1: Welcome Screen
+## 界面 1：欢迎界面
 
-### Layout
+### 布局
 ```
 ┌─────────────────────────────────────┐
 │                                     │
 │                                     │
 │         📦                          │
 │                                     │
-│   Drop Flomo export here            │
-│   or click to select                │
+│   将 Flomo 导出文件拖到此处           │
+│   或点击进行选择                     │
 │                                     │
 │   ┌─────────────────┐              │
-│   │  Select File    │              │
+│   │    选择文件      │              │
 │   └─────────────────┘              │
 │                                     │
 │                                     │
 └─────────────────────────────────────┘
 ```
 
-### Specifications
-- Window size: 600x400px
-- Drop zone: 400x200px, centered
-- Icon: SF Symbol "doc.zipper", 48pt
-- Text: 16pt, Secondary color
-- Button: 140x36px, Accent color
-- Corner radius: 8px
+### 规格说明
+- 窗口大小：600x400px
+- 拖放区域：400x200px，水平垂直居中
+- 图标：SF Symbol "doc.zipper"，48pt
+- 文本：16pt，二级文本颜色
+- 按钮：140x36px，强调色
+- 圆角半径：8px
 
-## Screen 2: Date Range Selection
+## 界面 2：日期范围选择
 
-### Layout
+### 布局
 ```
 ┌─────────────────────────────────────┐
-│  Select Date Range                  │
+│  选择日期范围                        │
 │                                     │
-│  Found 50 notes                     │
-│  from 2025-12-28 to 2026-01-30     │
+│  共发现 50 条笔记                     │
+│  范围：2025-12-28 至 2026-01-30      │
 │                                     │
 │  ┌─────────────┐  ┌─────────────┐ │
-│  │ Start Date  │  │  End Date   │ │
+│  │  开始日期   │  │  结束日期   │ │
 │  │ 2025-12-28  │  │ 2026-01-30  │ │
 │  └─────────────┘  └─────────────┘ │
 │                                     │
-│  ☑ Select All                      │
+│  ☑ 全选                            │
 │                                     │
 │  ┌────────┐  ┌────────┐           │
-│  │ Cancel │  │Convert │           │
+│  │  取消  │  │  转换  │           │
 │  └────────┘  └────────┘           │
 └─────────────────────────────────────┘
 ```
 
-### Specifications
-- Window size: 600x450px
-- Title: 24pt, Semibold
-- Info text: 14pt, Secondary color
-- Date pickers: Native macOS style
-- Checkbox: 14pt
-- Buttons: 100x36px
-- Spacing: 24px between elements
+### 规格说明
+- 窗口大小：600x450px
+- 标题：24pt，Semibold
+- 信息文本：14pt，二级文本颜色
+- 日期选择器：原生 macOS 样式
+- 复选框：14pt
+- 按钮：100x36px
+- 间距：元素间距 24px
 
-## Screen 3: Converting
+## 界面 3：转换中
 
-### Layout
+### 布局
 ```
 ┌─────────────────────────────────────┐
 │                                     │
 │                                     │
 │            ⏳                       │
 │                                     │
-│      Converting notes...            │
+│      正在转换笔记...                 │
 │                                     │
-│      Processing 25 of 50            │
+│      正在处理：25 / 50               │
 │                                     │
 │                                     │
 └─────────────────────────────────────┘
 ```
 
-### Specifications
-- Window size: 600x400px
-- Spinner: Native macOS activity indicator
-- Text: 16pt, centered
-- Progress text: 14pt, Secondary color
-- Smooth animation
+### 规格说明
+- 窗口大小：600x400px
+- 旋转器：原生 macOS 活动指示器
+- 文本：16pt，居中
+- 进度文本：14pt，二级文本颜色
+- 平滑动画
 
-## Screen 4: Preview
+## 界面 4：预览
 
-### Layout
+### 布局
 ```
 ┌─────────────────────────────────────┐
-│  Preview Converted Notes            │
+│  预览转换后的笔记                    │
 │                                     │
-│  8 daily notes created              │
-│  (2025-12-28 to 2026-01-30)        │
+│  已创建 8 条每日笔记                 │
+│  (2025-12-28 至 2026-01-30)         │
 │                                     │
 │  ┌─────────────────────────────┐  │
 │  │ 📄 2025-12-28.md            │  │
@@ -138,112 +138,112 @@
 │  └─────────────────────────────┘  │
 │                                     │
 │  ┌────────┐  ┌────────┐           │
-│  │  Back  │  │ Export │           │
+│  │  返回  │  │  导出  │           │
 │  └────────┘  └────────┘           │
 └─────────────────────────────────────┘
 ```
 
-### Specifications
-- Window size: 600x500px
-- List: Scrollable, 300px height
-- List items: 40px height, hover effect
-- Click to preview markdown content
-- Buttons: 100x36px
+### 规格说明
+- 窗口大小：600x500px
+- 列表：可滚动，高度 300px
+- 列表项：高度 40px，带悬停效果
+- 点击可预览 Markdown 内容
+- 按钮：100x36px
 
-## Interaction States
+## 交互状态
 
-### Hover States
-- Buttons: Slight opacity change (0.8)
-- Drop zone: Border color changes to Accent
-- List items: Background changes to Secondary Background
+### 悬停状态
+- 按钮：轻微透明度变化 (0.8)
+- 拖放区域：边框颜色变为强调色
+- 列表项：背景变为二级背景色
 
-### Active States
-- Buttons: Scale down slightly (0.98)
-- Date pickers: Native macOS focus ring
+### 激活状态
+- 按钮：轻微缩小 (0.98)
+- 日期选择器：原生 macOS 焦点环
 
-### Loading States
-- Spinner: Native macOS activity indicator
-- Progress text: Updates in real-time
-- Disable all interactive elements during processing
+### 加载状态
+- 旋转器：原生 macOS 活动指示器
+- 进度文本：实时更新
+- 处理期间禁用所有交互元素
 
-## Animations
+## 动画
 
-### Transitions
-- Screen transitions: Fade + slide (0.3s ease-in-out)
-- Button hover: 0.2s ease
-- List item hover: 0.15s ease
+### 过渡
+- 界面切换：淡入淡出 + 滑动 (0.3s，ease-in-out)
+- 按钮悬停：0.2s 平滑过渡
+- 列表项悬停：0.15s 平滑过渡
 
-### Loading
-- Spinner: Continuous rotation
-- Progress text: Fade in/out when updating
+### 加载
+- 旋转器：持续旋转
+- 进度文本：更新时有淡入淡出效果
 
-## Accessibility
+## 辅助功能 (Accessibility)
 
-### VoiceOver Support
-- All buttons have clear labels
-- Drop zone announces "Drop Flomo export file here"
-- Progress updates announced during conversion
-- List items announce filename and date
+### VoiceOver 支持
+- 所有按钮都有清晰的标签
+- 拖放区域播报：“将 Flomo 导出文件拖到此处”
+- 转换期间播报进度更新
+- 列表项播报文件名和日期
 
-### Keyboard Navigation
-- Tab through all interactive elements
-- Enter/Space to activate buttons
-- Arrow keys to navigate list
-- Cmd+O to open file picker
-- Esc to cancel/go back
+### 键盘导航
+- 使用 Tab 键在所有交互元素间切换
+- 使用 Enter/空格键激活按钮
+- 使用方向键在列表中导航
+- Cmd+O 打开文件选择器
+- Esc 键取消/返回
 
-## Error States
+## 错误状态
 
-### Invalid File
+### 无效文件
 ```
 ┌─────────────────────────────────────┐
 │         ⚠️                          │
 │                                     │
-│   Invalid Flomo export file         │
-│   Please select a valid .zip file   │
+│     无效的 Flomo 导出文件            │
+│     请选择有效的 .zip 文件            │
 │                                     │
 │   ┌─────────────────┐              │
-│   │   Try Again     │              │
+│   │     重试        │              │
 │   └─────────────────┘              │
 └─────────────────────────────────────┘
 ```
 
-### No Notes Found
+### 未发现笔记
 ```
 ┌─────────────────────────────────────┐
 │         ℹ️                          │
 │                                     │
-│   No notes found in date range      │
-│   Please select a different range   │
+│   在该日期范围内未发现笔记            │
+│   请选择不同的范围                  │
 │                                     │
 │   ┌─────────────────┐              │
-│   │      Back       │              │
+│   │      返回       │              │
 │   └─────────────────┘              │
 └─────────────────────────────────────┘
 ```
 
-## Design Principles Applied
+## 设计原则的应用
 
-### 1. Minimalism
-- Clean, uncluttered layouts
-- Ample white space
-- Focus on essential elements only
-- No unnecessary decorations
+### 1. 极简主义
+- 布局整洁，无杂乱
+- 充足的留白
+- 只关注核心元素
+- 无不必要的装饰
 
-### 2. Native macOS Feel
-- SF Pro font family
-- System colors and accent
-- Native UI controls (date pickers, buttons)
-- Standard window chrome
+### 2. 原生 macOS 体验
+- 使用 SF Pro 字体系列
+- 系统颜色和强调色
+- 原生 UI 控件（日期选择器、按钮）
+- 标准窗口装饰
 
-### 3. Fast & Responsive
-- Instant visual feedback
-- Smooth animations (< 0.3s)
-- Progress indicators for long operations
-- No blocking operations
+### 3. 快速且响应迅速
+- 即时视觉反馈
+- 流畅动画 (< 0.3s)
+- 长时间操作显示进度指示器
+- 无阻塞操作
 
-### 4. Clear Hierarchy
-- Large titles for context
-- Secondary text for details
-- Visual grouping of related elements
-- Consistent spacing system
+### 4. 清晰的层级结构
+- 大标题明确上下文
+- 二级文本提供细节
+- 相关元素进行视觉分组
+- 统一的间距系统

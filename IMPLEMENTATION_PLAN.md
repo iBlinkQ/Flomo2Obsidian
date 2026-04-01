@@ -1,16 +1,16 @@
-# Flomo to Obsidian Converter - Implementation Plan
+# Flomo 转 Obsidian 转换器 - 实现计划
 
-## Project Setup
+## 项目设置
 
-### 1. Create Xcode Project
-- Open Xcode
-- Create new macOS App project
-- Name: "Flomo2Obsidian"
-- Interface: SwiftUI
-- Language: Swift
-- Minimum deployment: macOS 15.0+
+### 1. 创建 Xcode 项目
+- 打开 Xcode
+- 创建新的 macOS App 项目
+- 名称："Flomo2Obsidian"
+- 界面：SwiftUI
+- 语言：Swift
+- 最低部署版本：macOS 15.0+
 
-### 2. Project Structure
+### 2. 项目结构
 ```
 Flomo2Obsidian/
 ├── App/
@@ -34,7 +34,7 @@ Flomo2Obsidian/
     └── Assets.xcassets
 ```
 
-## Phase 1: Core Data Models (Day 1)
+## 第 1 阶段：核心数据模型（第 1 天）
 
 ### FlomoNote.swift
 ```swift
@@ -65,14 +65,14 @@ struct DailyNote: Identifiable {
 }
 ```
 
-## Phase 2: File Handling (Day 1-2)
+## 第 2 阶段：文件处理（第 1-2 天）
 
 ### FileHandler.swift
-Key responsibilities:
-- Validate zip file format
-- Extract zip to temporary directory
-- Find and read HTML file
-- Clean up temporary files
+主要职责：
+- 验证 zip 文件格式
+- 将 zip 解压到临时目录
+- 查找并读取 HTML 文件
+- 清理临时文件
 
 ```swift
 class FileHandler {
@@ -83,14 +83,14 @@ class FileHandler {
 }
 ```
 
-## Phase 3: HTML Parsing (Day 2-3)
+## 第 3 阶段：HTML 解析（第 2-3 天）
 
 ### HTMLParser.swift
-Key responsibilities:
-- Parse HTML structure
-- Extract memo elements
-- Parse timestamp, content, images
-- Handle Chinese encoding
+主要职责：
+- 解析 HTML 结构
+- 提取 memo 元素
+- 解析时间戳、内容、图片
+- 处理中文编码
 
 ```swift
 class HTMLParser {
@@ -101,19 +101,19 @@ class HTMLParser {
 }
 ```
 
-### Implementation notes:
-- Use SwiftSoup or native XML parsing
-- Handle malformed HTML gracefully
-- Support UTF-8 encoding
+### 实现说明：
+- 使用 SwiftSoup 或原生 XML 解析
+- 优雅地处理格式错误的 HTML
+- 支持 UTF-8 编码
 
-## Phase 4: Markdown Conversion (Day 3-4)
+## 第 4 阶段：Markdown 转换（第 3-4 天）
 
 ### MarkdownConverter.swift
-Key responsibilities:
-- Convert HTML content to Markdown
-- Extract first line as H1 heading
-- Preserve tags and formatting
-- Group notes by date
+主要职责：
+- 将 HTML 内容转换为 Markdown
+- 提取第一行作为 H1 标题
+- 保留标签和格式
+- 按日期对笔记进行分组
 
 ```swift
 class MarkdownConverter {
@@ -124,13 +124,13 @@ class MarkdownConverter {
 }
 ```
 
-## Phase 5: Attachment Management (Day 4)
+## 第 5 阶段：附件管理（第 4 天）
 
 ### AttachmentManager.swift
-Key responsibilities:
-- Copy images to Attachments folder
-- Handle filename conflicts
-- Update image references in markdown
+主要职责：
+- 将图片复制到 Attachments 文件夹
+- 处理文件名冲突
+- 更新 Markdown 中的图片引用
 
 ```swift
 class AttachmentManager {
@@ -140,13 +140,13 @@ class AttachmentManager {
 }
 ```
 
-## Phase 6: Zip Generation (Day 4-5)
+## 第 6 阶段：Zip 生成（第 4-5 天）
 
 ### ZipGenerator.swift
-Key responsibilities:
-- Create output zip structure
-- Package daily notes and attachments
-- Generate final export file
+主要职责：
+- 创建输出 zip 结构
+- 打包每日笔记和附件
+- 生成最终导出文件
 
 ```swift
 class ZipGenerator {
@@ -157,30 +157,30 @@ class ZipGenerator {
 }
 ```
 
-## Phase 7: UI Implementation (Day 5-7)
+## 第 7 阶段：UI 实现（第 5-7 天）
 
 ### WelcomeView.swift
-- Drag & drop zone
-- File picker button
-- File validation
+- 拖放区域
+- 文件选择器按钮
+- 文件验证
 
 ### DateRangeView.swift
-- Display date range
-- Date pickers
-- "Select All" checkbox
-- Loading indicator during parsing
+- 显示日期范围
+- 日期选择器
+- “全选”复选框
+- 解析期间的加载指示器
 
 ### ConvertingView.swift
-- Progress indicator
-- Status text
-- Progress counter
+- 进度指示器
+- 状态文本
+- 进度计数器
 
 ### PreviewView.swift
-- List of daily notes
-- Click to preview markdown
-- Export button
+- 每日笔记列表
+- 点击预览 Markdown
+- 导出按钮
 
-## Phase 8: Integration & State Management (Day 7-8)
+## 第 8 阶段：集成与状态管理（第 7-8 天）
 
 ### AppState.swift
 ```swift
@@ -203,66 +203,66 @@ class AppState: ObservableObject {
 }
 ```
 
-## Phase 9: Testing (Day 8-9)
+## 第 9 阶段：测试（第 8-9 天）
 
-### Unit Tests
-- Test HTMLParser with sample HTML
-- Test MarkdownConverter output
-- Test AttachmentManager file handling
-- Test date range filtering
+### 单元测试
+- 使用 HTML 样本测试 HTMLParser
+- 测试 MarkdownConverter 输出
+- 测试 AttachmentManager 文件处理
+- 测试日期范围过滤
 
-### Integration Tests
-- Test full conversion pipeline
-- Test with various file sizes
-- Test with missing attachments
-- Test with edge cases
+### 集成测试
+- 测试完整的转换流水线
+- 测试各种文件大小
+- 测试附件缺失的情况
+- 测试各种边缘情况
 
-### Manual Testing
-- Test drag & drop functionality
-- Test UI responsiveness
-- Test error handling
-- Test on different macOS versions
+### 手动测试
+- 测试拖放功能
+- 测试 UI 响应速度
+- 测试错误处理
+- 在不同的 macOS 版本上测试
 
-## Phase 10: Polish & Packaging (Day 9-10)
+## 第 10 阶段：完善与打包（第 9-10 天）
 
-### App Icon
-- Design 1024x1024 icon
-- Use SF Symbols or custom design
-- Add to Assets.xcassets
+### 应用图标
+- 设计 1024x1024 图标
+- 使用 SF Symbols 或自定义设计
+- 添加到 Assets.xcassets
 
-### Build Settings
-- Set app name and bundle identifier
-- Configure minimum macOS version
-- Set up code signing
+### 构建设置
+- 设置应用名称和 Bundle Identifier
+- 配置最低 macOS 版本
+- 设置代码签名
 
-### Distribution
-- Archive app for distribution
-- Export as .app bundle
-- Test on clean macOS installation
-- Create user documentation
+### 发布
+- 存档 (Archive) 应用用于发布
+- 导出为 .app 包
+- 在干净的 macOS 环境下测试
+- 编写用户文档
 
-## Dependencies
+## 依赖关系
 
-### Required Libraries
-1. **SwiftSoup** (HTML parsing)
-   - Add via Swift Package Manager
+### 所需库
+1. **SwiftSoup** (HTML 解析)
+   - 通过 Swift Package Manager 添加
    - URL: https://github.com/scinfu/SwiftSoup
 
-2. **ZIPFoundation** (Zip handling)
-   - Add via Swift Package Manager
+2. **ZIPFoundation** (Zip 处理)
+   - 通过 Swift Package Manager 添加
    - URL: https://github.com/weichsel/ZIPFoundation
 
-### Installation
+### 安装
 ```swift
-// In Xcode: File > Add Packages
-// Add the above URLs
+// 在 Xcode 中：File > Add Packages
+// 添加以上 URL
 ```
 
-## Key Implementation Details
+## 关键实现细节
 
-### HTML Parsing Strategy
+### HTML 解析策略
 ```swift
-// Example parsing logic
+// 解析逻辑示例
 let html = try String(contentsOf: htmlFileURL, encoding: .utf8)
 let doc = try SwiftSoup.parse(html)
 let memos = try doc.select("div.memo")
@@ -274,26 +274,26 @@ for memo in memos {
 }
 ```
 
-### Markdown Generation Strategy
+### Markdown 生成策略
 ```swift
 func generateMarkdown(for dailyNote: DailyNote) -> String {
     var markdown = ""
     
     for (index, note) in dailyNote.notes.enumerated() {
-        // Extract first line as heading
+        // 提取第一行作为标题
         let lines = note.content.components(separatedBy: "\n")
-        let heading = lines.first ?? "Untitled"
+        let heading = lines.first ?? "无标题"
         let body = lines.dropFirst().joined(separator: "\n")
         
         markdown += "# \(heading)\n\n"
         markdown += "\(body)\n\n"
         
-        // Add images at the end
+        // 在末尾添加图片
         for image in note.images {
             markdown += "![](\(image))\n\n"
         }
         
-        // Add separator between notes
+        // 在笔记之间添加分隔符
         if index < dailyNote.notes.count - 1 {
             markdown += "---\n\n"
         }
@@ -303,7 +303,7 @@ func generateMarkdown(for dailyNote: DailyNote) -> String {
 }
 ```
 
-### Date Grouping Strategy
+### 日期分组策略
 ```swift
 func groupNotesByDate(_ notes: [FlomoNote]) -> [DailyNote] {
     let calendar = Calendar.current
@@ -317,17 +317,17 @@ func groupNotesByDate(_ notes: [FlomoNote]) -> [DailyNote] {
 }
 ```
 
-## Error Handling Strategy
+## 错误处理策略
 
-### Common Errors
-1. Invalid zip file format
-2. Missing HTML file
-3. Corrupted HTML structure
-4. Missing attachments
-5. Disk space issues
-6. File permission errors
+### 常见错误
+1. zip 文件格式无效
+2. 缺少 HTML 文件
+3. HTML 结构损坏
+4. 缺少附件
+5. 磁盘空间问题
+6. 文件权限错误
 
-### Error Handling Pattern
+### 错误处理模式
 ```swift
 enum ConversionError: LocalizedError {
     case invalidZipFile
@@ -339,25 +339,25 @@ enum ConversionError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidZipFile:
-            return "Invalid Flomo export file"
+            return "无效的 Flomo 导出文件"
         case .htmlFileNotFound:
-            return "HTML file not found in export"
+            return "在导出文件中未找到 HTML 文件"
         case .parsingFailed(let detail):
-            return "Failed to parse notes: \(detail)"
+            return "解析笔记失败：\(detail)"
         case .attachmentMissing(let filename):
-            return "Attachment not found: \(filename)"
+            return "未找到附件：\(filename)"
         case .diskSpaceInsufficient:
-            return "Insufficient disk space"
+            return "磁盘空间不足"
         }
     }
 }
 ```
 
-## Performance Considerations
+## 性能考量
 
-### Async Operations
+### 异步操作
 ```swift
-// Parse HTML asynchronously
+// 异步解析 HTML
 Task {
     do {
         let notes = try await parseHTMLAsync(htmlContent)
@@ -372,32 +372,32 @@ Task {
 }
 ```
 
-### Memory Management
-- Process large files in chunks
-- Release temporary files promptly
-- Use autoreleasepool for batch operations
-- Monitor memory usage during conversion
+### 内存管理
+- 分块处理大文件
+- 及时释放临时文件
+- 对批量操作使用 autoreleasepool
+- 在转换期间监控内存使用情况
 
-## Timeline Summary
+## 时间表摘要
 
-| Phase | Duration | Deliverable |
+| 阶段 | 周期 | 交付成果 |
 |-------|----------|-------------|
-| 1. Data Models | 0.5 day | Core structs |
-| 2. File Handling | 1 day | Zip extraction |
-| 3. HTML Parsing | 1.5 days | Note extraction |
-| 4. Markdown Conversion | 1 day | MD generation |
-| 5. Attachment Management | 0.5 day | Image handling |
-| 6. Zip Generation | 1 day | Output creation |
-| 7. UI Implementation | 2 days | All screens |
-| 8. Integration | 1 day | State management |
-| 9. Testing | 1 day | QA |
-| 10. Polish & Packaging | 1 day | Distribution |
-| **Total** | **10 days** | **Complete app** |
+| 1. 数据模型 | 0.5 天 | 核心结构体 |
+| 2. 文件处理 | 1 天 | Zip 解压 |
+| 3. HTML 解析 | 1.5 天 | 笔记提取 |
+| 4. Markdown 转换 | 1 天 | MD 生成 |
+| 5. 附件管理 | 0.5 天 | 图片处理 |
+| 6. Zip 生成 | 1 天 | 输出文件创建 |
+| 7. UI 实现 | 2 天 | 所有界面 |
+| 8. 集成 | 1 天 | 状态管理 |
+| 9. 测试 | 1 天 | 质量保证 (QA) |
+| 10. 完善与打包 | 1 天 | 应用分发 |
+| **总计** | **10 天** | **完整的应用** |
 
-## Next Steps
+## 下一步
 
-1. ✅ Review this implementation plan
-2. Set up Xcode project
-3. Add dependencies (SwiftSoup, ZIPFoundation)
-4. Start with Phase 1 (Data Models)
-5. Iterate through phases sequentially
+1. ✅ 审查此实现计划
+2. 设置 Xcode 项目
+3. 添加依赖项 (SwiftSoup, ZIPFoundation)
+4. 从第 1 阶段（数据模型）开始
+5. 按顺序迭代各个阶段
