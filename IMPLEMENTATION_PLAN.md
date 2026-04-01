@@ -8,7 +8,7 @@
 - Name: "Flomo2Obsidian"
 - Interface: SwiftUI
 - Language: Swift
-- Minimum deployment: macOS 13.0+
+- Minimum deployment: macOS 15.0+
 
 ### 2. Project Structure
 ```

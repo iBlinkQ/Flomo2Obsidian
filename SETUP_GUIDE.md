@@ -6,7 +6,7 @@ Flomo2Obsidian 是一个原生 macOS 应用，用于将 Flomo 笔记导出文件
 
 ## 前置要求
 
-- macOS 13.0 或更高版本
+- macOS 15.0 (Sequoia) 或更高版本
 - Xcode 14.0 或更高版本
 - Swift 5.7 或更高版本
 
@@ -145,7 +145,7 @@ Flomo2Obsidian/
 - 检查图片路径是否正确
 
 **4. 应用无法启动**
-- 检查 macOS 版本是否为 13.0 或更高
+- 检查 macOS 版本是否为 15.0 (Sequoia) 或更高
 - 确保已正确配置代码签名
 
 ### 调试技巧
