@@ -23,7 +23,7 @@
 - 📅 **灵活的日期筛选** - 自由选择需要转换的笔记时间范围
 - 📝 **两种导出模式** - 支持「按天合并」和「按卡片独立」两种导出方式，适配不同笔记管理习惯
 - 🏷️ **Frontmatter 支持** - 自动生成 `created` 和 `noteType` 等元数据，便于 Obsidian 检索和管理
-- 🖼️ **附件支持** - 自动处理并导出图片等附件文件
+- 🖼️ **附件支持** - 自动处理并导出图片和语音（M4A）附件文件，语音以 Obsidian Callout 格式展示，并保留 Flomo 的语音转文字文本
 - 👀 **实时预览** - 转换前可预览 Markdown 格式的笔记内容
 - ⚡ **快速高效** - 原生 SwiftUI 开发，性能优异
 
@@ -146,6 +146,12 @@ noteType: CardNote
 
 笔记完整内容（含首行）...
 
+> [!tip]+ 语音
+> ![[audio_record_watch_xxx.m4a]]
+> 语音转文字文本内容（若有）...
+
+![](Attachments/image.jpg)
+
 ---
 
 # 另一条笔记标题
@@ -170,6 +176,12 @@ noteType: CardNote
 ---
 
 笔记完整内容...
+
+> [!tip]+ 语音
+> ![[audio_record_watch_xxx.m4a]]
+> 语音转文字文本内容（若有）...
+
+![](Attachments/image.jpg)
 ```
 
 - 文件名自动清理非法字符，重名时自动编号
@@ -177,7 +189,9 @@ noteType: CardNote
 
 ### 通用
 
-- 附件保存在 `Attachments` 文件夹中
+- 附件（图片、语音 M4A）统一保存在 `Attachments` 文件夹中
+- 语音以 `> [!tip]+ 语音` Callout 格式呈现，紧接正文内容之后、图片之前
+- 语音 Callout 包含嵌入的音频文件和 Flomo 的语音转文字原文（无转文字时仅保留音频链接）
 - 有序列表、无序列表等格式完整保留
 
 ## 🤝 贡献

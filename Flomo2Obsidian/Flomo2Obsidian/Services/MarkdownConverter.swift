@@ -49,6 +49,9 @@ class MarkdownConverter {
                 markdown += "\(note.content)\n\n"
             }
 
+            // Add audio callouts before images
+            markdown += appendAudioCallouts(note.audios)
+
             // Add images at the end
             for image in note.images {
                 let imageName = URL(fileURLWithPath: image).lastPathComponent
@@ -130,6 +133,9 @@ class MarkdownConverter {
             markdown += "\(note.content)\n\n"
         }
 
+        // Audio callouts before images
+        markdown += appendAudioCallouts(note.audios)
+
         // Images at the end
         for image in note.images {
             let imageName = URL(fileURLWithPath: image).lastPathComponent
@@ -137,6 +143,23 @@ class MarkdownConverter {
         }
 
         return markdown
+    }
+
+    // MARK: - Audio Callout Helper
+
+    private func appendAudioCallouts(_ audios: [AudioAttachment]) -> String {
+        guard !audios.isEmpty else { return "" }
+        var output = ""
+        for audio in audios {
+            let audioName = URL(fileURLWithPath: audio.filePath).lastPathComponent
+            output += "> [!tip]+ 语音\n"
+            output += "> ![[\(audioName)]]\n"
+            if !audio.transcript.isEmpty {
+                output += "> \(audio.transcript)\n"
+            }
+            output += "\n"
+        }
+        return output
     }
 
     // MARK: - Filename Helpers

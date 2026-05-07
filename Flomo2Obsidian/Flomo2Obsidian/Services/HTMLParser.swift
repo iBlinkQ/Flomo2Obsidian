@@ -55,8 +55,9 @@ class HTMLParser {
         let content = try extractContent(from: contentElement)
 
         let images = try extractImages(from: memo)
+        let audios = try extractAudios(from: memo)
 
-        return FlomoNote(timestamp: timestamp, content: content, images: images)
+        return FlomoNote(timestamp: timestamp, content: content, images: images, audios: audios)
     }
 
     private func parseTimestamp(_ timeString: String) -> Date? {
@@ -114,5 +115,19 @@ class HTMLParser {
         }
 
         return imagePaths
+    }
+
+    private func extractAudios(from memo: Element) throws -> [AudioAttachment] {
+        let players = try memo.select("div.audio-player")
+        var result: [AudioAttachment] = []
+
+        for player in players {
+            guard let src = try? player.select("audio").first()?.attr("src"),
+                  !src.isEmpty else { continue }
+            let transcript = (try? player.select("div.audio-player__content").text()) ?? ""
+            result.append(AudioAttachment(filePath: src, transcript: transcript))
+        }
+
+        return result
     }
 }

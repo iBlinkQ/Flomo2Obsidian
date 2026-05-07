@@ -30,6 +30,20 @@ class AttachmentManager {
                     mapping[imagePath] = finalDestURL.lastPathComponent
                 }
             }
+
+            // 拷贝语音附件（M4A）
+            for audio in note.audios {
+                let sourceAudioURL = sourceDir.appendingPathComponent(audio.filePath)
+                let audioName = sourceAudioURL.lastPathComponent
+
+                if fileManager.fileExists(atPath: sourceAudioURL.path) {
+                    let destAudioURL = attachmentsDir.appendingPathComponent(audioName)
+                    let finalDestURL = handleDuplicateFilename(destAudioURL, in: attachmentsDir)
+
+                    try fileManager.copyItem(at: sourceAudioURL, to: finalDestURL)
+                    mapping[audio.filePath] = finalDestURL.lastPathComponent
+                }
+            }
         }
 
         return mapping
