@@ -52,7 +52,7 @@ Flomo2Obsidian 是一个完全离线的本地应用，我们深知笔记内容�
 
 ### 系统要求
 
-- macOS 15.0 (Sequoia) 或更高版本
+- macOS 13.0 (Ventura) 或更高版本
 - 从 Flomo 导出的 ZIP 文件
 
 ### 安装步骤
