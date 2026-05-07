@@ -419,12 +419,21 @@ struct DateRangeView: View {
 }
 // MARK: - Compatibility Helpers
 
+@available(macOS 14.0, *)
+private struct OnChangeModifier<V: Equatable>: ViewModifier {
+    let value: V
+    let action: () -> Void
+    func body(content: Content) -> some View {
+        content.onChange(of: value) { action() }
+    }
+}
+
 private extension View {
     /// macOS 14+ 使用新签名 onChange，macOS 13 退化为 perform: 形式
     @ViewBuilder
     func compatOnChange<V: Equatable>(of value: V, action: @escaping () -> Void) -> some View {
         if #available(macOS 14.0, *) {
-            self.onChange(of: value) { action() }
+            self.modifier(OnChangeModifier(value: value, action: action))
         } else {
             self.onChange(of: value, perform: { _ in action() })
         }
