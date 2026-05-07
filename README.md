@@ -23,7 +23,9 @@
 - 📅 **灵活的日期筛选** - 自由选择需要转换的笔记时间范围
 - 📝 **两种导出模式** - 支持「按天合并」和「按卡片独立」两种导出方式，适配不同笔记管理习惯
 - 🏷️ **Frontmatter 支持** - 自动生成 `created` 和 `noteType` 等元数据，便于 Obsidian 检索和管理
-- 🖼️ **附件支持** - 自动处理并导出图片和语音（M4A）附件文件，语音以 Obsidian Callout 格式展示，并保留 Flomo 的语音转文字文本
+- 🖼️ **附件支持** - 自动处理并导出图片和语音 🆕（M4A）附件文件，语音以 Obsidian Callout 格式展示，并保留 Flomo 的语音转文字文本 <img width="400" alt="image" src="https://github.com/user-attachments/assets/87e124e9-008c-45fa-93ec-6978b2f8e57d" />
+
+
 - 👀 **实时预览** - 转换前可预览 Markdown 格式的笔记内容
 - ⚡ **快速高效** - 原生 SwiftUI 开发，性能优异
 
