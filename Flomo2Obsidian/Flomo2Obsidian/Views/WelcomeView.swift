@@ -115,7 +115,7 @@ struct WelcomeView: View {
                                             endPoint: .bottomTrailing
                                         )
                                 )
-                                .modifier(BounceSymbolModifier(value: isDragging))
+                                .bounceEffect(value: isDragging)
                                 .scaleEffect(isDragging ? 1.1 : 1.0)
 
                             VStack(spacing: 8) {
@@ -232,15 +232,14 @@ struct WelcomeView: View {
 
 // MARK: - Compatibility Helpers
 
-/// macOS 14+ 使用 symbolEffect(.bounce)，macOS 13 退化为无额外修饰符
-private struct BounceSymbolModifier: ViewModifier {
-    let value: Bool
-
-    func body(content: Content) -> some View {
+private extension View {
+    /// macOS 14+ 使用 symbolEffect(.bounce)，macOS 13 退化为无额外修饰符
+    @ViewBuilder
+    func bounceEffect(value: Bool) -> some View {
         if #available(macOS 14.0, *) {
-            content.symbolEffect(.bounce, value: value)
+            self.symbolEffect(.bounce, value: value)
         } else {
-            content
+            self
         }
     }
 }
