@@ -297,12 +297,8 @@ struct DateRangeView: View {
             }
         }
         .buttonStyle(.plain)
-        .onChange(of: startDate) {
-            checkAndUpdateSelectAll()
-        }
-        .onChange(of: endDate) {
-            checkAndUpdateSelectAll()
-        }
+        .compatOnChange(of: startDate) { checkAndUpdateSelectAll() }
+        .compatOnChange(of: endDate)   { checkAndUpdateSelectAll() }
     }
 
     private var selectAllBackground: some View {
@@ -418,6 +414,19 @@ struct DateRangeView: View {
 
         if !isFullRange && selectAll {
             selectAll = false
+        }
+    }
+}
+// MARK: - Compatibility Helpers
+
+private extension View {
+    /// macOS 14+ 使用新签名 onChange，macOS 13 退化为 perform: 形式
+    @ViewBuilder
+    func compatOnChange<V: Equatable>(of value: V, action: @escaping () -> Void) -> some View {
+        if #available(macOS 14.0, *) {
+            self.onChange(of: value) { action() }
+        } else {
+            self.onChange(of: value, perform: { _ in action() })
         }
     }
 }
