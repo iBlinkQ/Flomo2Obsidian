@@ -1,0 +1,245 @@
+.flomo-import-modal {
+  width: min(740px, 95vw);
+}
+.flomo-import-modal .modal-content {
+  min-width: 0;
+}
+.flomo-import-modal .flomo-vault-name,
+.flomo-import-modal .flomo-secondary {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.flomo-import-modal .flomo-step-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  padding: 13px 0;
+  margin: 0 0 14px;
+  list-style: none;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+.flomo-import-modal .flomo-step-list li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.flomo-import-modal .flomo-step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--background-secondary);
+  font-weight: var(--font-semibold);
+}
+.flomo-import-modal .flomo-step-list [aria-current] {
+  color: var(--text-normal);
+  font-weight: var(--font-semibold);
+}
+.flomo-import-modal .flomo-step-list [aria-current] .flomo-step-number {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+.flomo-import-modal .flomo-step-done .flomo-step-number {
+  color: var(--text-accent);
+}
+.flomo-import-modal .flomo-drop {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 21px 12px;
+  text-align: center;
+  border: 1px dashed var(--background-modifier-border-hover);
+  border-radius: var(--radius-m);
+}
+.flomo-import-modal .flomo-drop.is-dragging {
+  background: var(--background-modifier-hover);
+  border-color: var(--interactive-accent);
+}
+.flomo-import-modal .flomo-drop-icon {
+  color: var(--text-accent);
+}
+.flomo-import-modal .flomo-drop > :is(h3, p) {
+  margin: 0;
+}
+.flomo-import-modal .flomo-help {
+  font-size: var(--font-ui-small);
+}
+.flomo-import-modal .flomo-source-summary,
+.flomo-import-modal .flomo-audio {
+  background: var(--background-secondary);
+  padding: 9px 12px;
+  border-radius: var(--radius-m);
+  overflow-wrap: anywhere;
+}
+.flomo-import-modal .flomo-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 16px 0;
+  min-width: 0;
+}
+.flomo-import-modal :is(.flomo-fieldset legend, .flomo-field-title) {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: var(--font-semibold);
+}
+.flomo-import-modal :is(.flomo-field-row, .flomo-folder-row, .flomo-mode, .flomo-actions, .flomo-footer) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+.flomo-import-modal .flomo-field-row {
+  align-items: end;
+}
+.flomo-import-modal .flomo-field-row label {
+  display: grid;
+  gap: 3px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.flomo-import-modal .flomo-folder-row input {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+.flomo-import-modal .flomo-fieldset > .flomo-secondary {
+  margin-top: 6px;
+}
+.flomo-import-modal .flomo-mode [aria-pressed="true"],
+.flomo-import-modal .flomo-files [aria-current="true"] {
+  color: var(--text-on-accent);
+  background: var(--interactive-accent);
+}
+.flomo-import-modal .flomo-error,
+.flomo-import-modal .flomo-warning {
+  overflow-wrap: anywhere;
+  font-size: var(--font-ui-small);
+  margin: 6px 0;
+}
+.flomo-import-modal .flomo-error { color: var(--text-error); }
+.flomo-import-modal .flomo-warning { color: var(--text-muted); }
+.flomo-import-modal .flomo-review {
+  display: grid;
+  grid-template-columns: minmax(115px, .9fr) minmax(0, 2.1fr);
+  margin-top: 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  min-width: 0;
+}
+.flomo-import-modal .flomo-files,
+.flomo-import-modal .flomo-preview {
+  min-width: 0;
+  max-height: min(420px, 46vh);
+  overflow: auto;
+}
+.flomo-import-modal .flomo-files {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding: 7px;
+  border-inline-end: 1px solid var(--background-modifier-border);
+}
+.flomo-import-modal .flomo-files button {
+  justify-content: flex-start;
+  text-align: left;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--font-ui-small);
+}
+.flomo-import-modal .flomo-preview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 6px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+.flomo-import-modal .flomo-preview-body {
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+.flomo-import-modal .flomo-preview-body h3 {
+  margin: 12px 0 5px;
+}
+.flomo-import-modal :is(.flomo-note-text, .flomo-preview-body pre, .flomo-audio p) {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.flomo-import-modal .flomo-preview-body pre {
+  margin: 0;
+}
+.flomo-import-modal :is(.flomo-audio, .flomo-image) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 6px;
+}
+.flomo-import-modal .flomo-audio p {
+  flex-basis: 100%;
+  margin: 0;
+}
+.flomo-import-modal :is(.flomo-preview-body img, .flomo-preview-body audio) {
+  max-width: 100%;
+}
+.flomo-import-modal .flomo-footer {
+  justify-content: space-between;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--background-primary);
+  border-top: 1px solid var(--background-modifier-border);
+  margin-top: 14px;
+  padding-top: 12px;
+}
+.flomo-import-modal .flomo-actions {
+  margin-inline-start: auto;
+}
+.flomo-import-modal .flomo-progress {
+  text-align: center;
+  padding: 22px 0;
+}
+.flomo-import-modal .flomo-progress progress {
+  width: min(100%, 260px);
+}
+.flomo-import-modal .flomo-result-list {
+  max-height: 220px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  padding-inline-start: 23px;
+}
+.flomo-import-modal .flomo-result-list button {
+  white-space: normal;
+  max-width: 100%;
+  height: auto;
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+@media (max-width: 470px) {
+  .flomo-import-modal .flomo-review {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .flomo-import-modal .flomo-files {
+    max-height: 100px;
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--background-modifier-border);
+  }
+}
+@media (max-height: 500px) {
+  .flomo-import-modal .flomo-step-list {
+    padding: 8px 0;
+    margin-bottom: 9px;
+  }
+  .flomo-import-modal .flomo-files,
+  .flomo-import-modal .flomo-preview {
+    max-height: clamp(86px, calc(100vh - 265px), 235px);
+  }
+  .flomo-import-modal .flomo-footer {
+    margin-top: 9px;
+    padding-top: 8px;
+  }
+}

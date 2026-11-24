@@ -27,3 +27,7 @@ DerivedData/
 # IDE
 .vscode/
 .idea/
+
+# Obsidian plugin build
+/node_modules/
+/main.js

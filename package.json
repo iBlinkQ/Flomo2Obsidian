@@ -1,0 +1,21 @@
+{
+  "name": "flomo-zip-import",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run check && node esbuild.config.mjs",
+    "check": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "@zip.js/zip.js": "2.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "0.28.2",
+    "linkedom": "^0.18.12",
+    "obsidian": "1.14.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
