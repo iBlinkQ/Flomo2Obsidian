@@ -1,20 +1,19 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseHTML } from "linkedom";
 import { BlobWriter, TextReader, ZipWriter } from "@zip.js/zip.js";
 import { FlomoArchive, parseFlomoHtml } from "../src/archive";
 import { attachmentDirectory, batchKey, buildPlan, folderPath, renderMarkdown, selectNotes } from "../src/conversion";
 
-const doc = parseHTML("<html><body></body></html>").document as unknown as Document;
 const member = (time: string, text: string, media = "") =>
   `<div class="memo"><div class="time">${time}</div><div class="content">${text}</div>${media}</div>`;
 const html = [
-  member("2026-11-19 09:03:00", "<p>第一条<br>第二行 #标签</p><ul><li>列表</li></ul>",
+  member("2026-11-19 09:03:00", "<p>第一条<br>第二行 #标签</p><ul><li>列表</li></ul><script>忽略</script><iframe>忽略</iframe>",
     '<div class="files"><img src="file/图%20片.png"><img src="https://example.invalid/remote.png"></div>'),
   member("2026-11-19 23:59:59", "<p>第一条</p>",
-    '<div class="audio-player"><audio src="file/音频.m4a"></audio><div class="audio-player__content">第一行<br>第二行</div></div>'),
+    '<div class="audio-player"><audio><source src="file/音频.m4a"></audio><div class="audio-player__content">第一行<br>第二行</div></div>'),
   member("2026-11-20 00:00:00", "<p>下一天</p>"),
   member("2026-02-30 12:00:00", "<p>无效日期</p>"),
+  `<template>${member("2026-11-20 01:00:00", "<p>模板内的内容</p>")}</template>`,
 ].join("\n");
 
 test("reads nested Flomo exports, preserves lists and audio transcript, and ignores remote media", async () => {
@@ -22,7 +21,7 @@ test("reads nested Flomo exports, preserves lists and audio transcript, and igno
   await output.add("export/index.html", new TextReader(html));
   await output.add("export/file/图 片.png", new TextReader("a"));
   await output.add("export/file/音频.m4a", new TextReader("b"));
-  const archive = await FlomoArchive.open(await output.close(), doc);
+  const archive = await FlomoArchive.open(await output.close());
   try {
     assert.equal(archive.notes.length, 3);
     assert.equal(archive.skipped, 1);
@@ -51,7 +50,7 @@ test("matches all four attachment policies and rejects invalid paths", () => {
 
 test("deduplicates filenames, preserves attachment links, and groups by selected mode", () => {
   const paths = new Set(["file/图 片.png", "file/音频.m4a"]);
-  const notes = selectNotes(parseFlomoHtml(doc, html, "index.html", paths).notes, "2026-11-19", "2026-11-19");
+  const notes = selectNotes(parseFlomoHtml(html, "index.html", paths).notes, "2026-11-19", "2026-11-19");
   const options = { start: "2026-11-19", end: "2026-11-19", mode: "day", folder: "日记" } as const;
   const day = buildPlan("day", notes, options, "素材", ["日记/2026-11-19.md", "素材/音频.m4a"]);
   assert.equal(day.files[0].path, "日记/2026-11-19-2.md");

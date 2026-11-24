@@ -133,6 +133,10 @@ type: card_note
 
 ![Flomo2Obsidian macOS 独立版界面](https://github.com/user-attachments/assets/3df5e7ca-de3f-487e-8f9c-1c495e2bd147)
 
+## English overview
+
+Flomo ZIP Import is a desktop plugin for importing Flomo ZIP exports into Obsidian. It converts notes locally into Markdown and preserves images, audio recordings, and existing transcripts. Preview the generated files, then import them into your vault or save them as a ZIP archive. You can group notes by date or import each card as a separate note.
+
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！

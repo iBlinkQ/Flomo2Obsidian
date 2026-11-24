@@ -1,4 +1,9 @@
 import { BlobReader, Uint8ArrayWriter, ZipReader, type FileEntry } from "@zip.js/zip.js";
+import { parseFragment, type DefaultTreeAdapterTypes } from "parse5";
+
+type ChildNode = DefaultTreeAdapterTypes.ChildNode;
+type Element = DefaultTreeAdapterTypes.Element;
+type ParentNode = DefaultTreeAdapterTypes.ParentNode;
 
 export interface Media {
   reference: string;
@@ -49,37 +54,70 @@ function resolveReference(source: string, ref: string, entries: ReadonlySet<stri
   }
 }
 
-function inlineText(node: Node): string {
-  if (node.nodeType === 3) return node.textContent ?? "";
-  if (node.nodeType === 1) {
-    const tag = (node as Element).tagName.toLowerCase();
-    if (tag === "br") return "\n";
-    if (["script", "style", "template", "iframe", "img", "audio", "video"].includes(tag)) return "";
+function isElement(node: ChildNode): node is Element {
+  return "tagName" in node;
+}
+
+function attribute(element: Element, name: string): string | undefined {
+  return element.attrs.find((item) => item.name === name)?.value;
+}
+
+function isDivWithClass(element: Element, name: string): boolean {
+  return element.tagName === "div" && (attribute(element, "class") ?? "").split(/[\t\n\f\r ]+/).includes(name);
+}
+
+function* descendants(parent: ParentNode): Generator<Element> {
+  for (const child of parent.childNodes) {
+    if (!isElement(child)) continue;
+    yield child;
+    yield* descendants(child);
   }
-  return Array.from(node.childNodes).map(inlineText).join("");
+}
+
+function findElement(parent: ParentNode, matches: (element: Element) => boolean): Element | undefined {
+  for (const element of descendants(parent)) {
+    if (matches(element)) return element;
+  }
+}
+
+function hasAncestor(element: Element, scope: Element, matches: (ancestor: Element) => boolean): boolean {
+  for (let parent = element.parentNode; parent && parent !== scope && "tagName" in parent; parent = parent.parentNode) {
+    if (matches(parent)) return true;
+  }
+  return false;
+}
+
+function inlineText(node: ChildNode): string {
+  if (!isElement(node)) return "value" in node ? node.value : "";
+  if (node.tagName === "br") return "\n";
+  if (["script", "style", "template", "iframe", "img", "audio", "video"].includes(node.tagName)) return "";
+  return node.childNodes.map(inlineText).join("");
 }
 
 function cleanText(text: string): string {
   return text.split("\n").map((line) => line.replace(/[\t\u00a0\r ]+/g, " ").trim()).join("\n").trim();
 }
 
+function isList(node: ChildNode): node is Element {
+  return isElement(node) && (node.tagName === "ol" || node.tagName === "ul");
+}
+
 function listLines(list: Element, level = 0): string[] {
-  return Array.from(list.children).filter((item) => item.tagName.toLowerCase() === "li").flatMap((item, index) => {
-    const children = Array.from(item.childNodes);
-    const isList = (node: Node) => node.nodeType === 1 && /^(OL|UL)$/i.test((node as Element).tagName);
+  return list.childNodes.filter((item): item is Element => isElement(item) && item.tagName === "li").flatMap((item, index) => {
+    const children = item.childNodes;
     const text = cleanText(children.filter((node) => !isList(node)).map(inlineText).join(""));
     const indent = "    ".repeat(level);
-    const marker = list.tagName.toLowerCase() === "ol" ? `${index + 1}.` : "-";
+    const marker = list.tagName === "ol" ? `${index + 1}.` : "-";
     return [
       ...(text ? [`${indent}${marker} ${text.replace(/\n/g, `\n${indent}    `)}`] : []),
-      ...children.filter(isList).flatMap((child) => listLines(child as Element, level + 1)),
+      ...children.filter(isList).flatMap((child) => listLines(child, level + 1)),
     ];
   });
 }
 
 function extractContent(content: Element): string {
-  return Array.from(content.childNodes).flatMap((node) => {
-    if (node.nodeType === 1 && /^(OL|UL)$/i.test((node as Element).tagName)) return listLines(node as Element);
+  return content.childNodes.flatMap((node) => {
+    if (isList(node)) return listLines(node);
     const text = cleanText(inlineText(node));
     return text ? [text] : [];
   }).join("\n");
@@ -92,30 +130,38 @@ function readTimestamp(raw: string): string | undefined {
   if (Number.isFinite(date.getTime()) && date.toISOString().slice(0, 19).replace("T", " ") === value) return value;
 }
 
-export function parseFlomoHtml(doc: Document, html: string, source: string, entries: ReadonlySet<string>) {
-  // Template content is inert. Archive HTML is never mounted into the app.
-  const template = doc.createElement("template");
-  template.innerHTML = html;
+export function parseFlomoHtml(html: string, source: string, entries: ReadonlySet<string>) {
+  // Parse into data without creating a browser document or loading resources.
   const notes: FlomoNote[] = [];
   let skipped = 0;
-  for (const memo of template.content.querySelectorAll("div.memo")) {
-    const content = memo.querySelector("div.content");
-    const timestamp = readTimestamp(memo.querySelector("div.time")?.textContent ?? "");
+  for (const memo of descendants(parseFragment(html))) {
+    if (!isDivWithClass(memo, "memo")) continue;
+    const content = findElement(memo, (element) => isDivWithClass(element, "content"));
+    const time = findElement(memo, (element) => isDivWithClass(element, "time"));
+    const timestamp = time && readTimestamp(inlineText(time));
     if (!content || !timestamp) {
       skipped++;
       continue;
     }
     const media: Media[] = [];
-    for (const player of memo.querySelectorAll("div.audio-player")) {
-      const ref = player.querySelector("audio[src], audio source[src]")?.getAttribute("src")?.trim();
+    for (const player of descendants(memo)) {
+      if (!isDivWithClass(player, "audio-player")) continue;
+      const audioSource = findElement(player, (element) => {
+        if (attribute(element, "src") === undefined) return false;
+        return element.tagName === "audio" || (element.tagName === "source" &&
+          hasAncestor(element, player, (ancestor) => ancestor.tagName === "audio"));
+      });
+      const ref = audioSource && attribute(audioSource, "src")?.trim();
       if (!ref) continue;
+      const transcript = findElement(player, (element) => isDivWithClass(element, "audio-player__content"));
       media.push({
         reference: ref, entry: resolveReference(source, ref, entries), kind: "audio",
-        transcript: cleanText(inlineText(player.querySelector("div.audio-player__content") ?? doc.createTextNode(""))),
+        transcript: transcript ? cleanText(inlineText(transcript)) : "",
       });
     }
-    for (const image of memo.querySelectorAll("div.files img[src]")) {
-      const ref = image.getAttribute("src")?.trim();
+    for (const image of descendants(memo)) {
+      if (image.tagName !== "img" || !hasAncestor(image, memo, (ancestor) => isDivWithClass(ancestor, "files"))) continue;
+      const ref = attribute(image, "src")?.trim();
       if (ref) media.push({ reference: ref, entry: resolveReference(source, ref, entries), kind: "image" });
     }
     notes.push({ timestamp, content: extractContent(content), media });
@@ -133,7 +179,7 @@ export class FlomoArchive {
     this.reader = new ZipReader(new BlobReader(file), zipOptions);
   }
 
-  static async open(file: Blob, doc: Document): Promise<FlomoArchive> {
+  static async open(file: Blob): Promise<FlomoArchive> {
     const archive = new FlomoArchive(file);
     try {
       const entries = await archive.reader.getEntries();
@@ -148,7 +194,7 @@ export class FlomoArchive {
       for (const path of names) {
         if (!/\.html?$/i.test(path)) continue;
         const html = new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(await archive.read(path));
-        const { notes, skipped } = parseFlomoHtml(doc, html, path, names);
+        const { notes, skipped } = parseFlomoHtml(html, path, names);
         archive.notes.push(...notes);
         archive.skipped += skipped;
       }

@@ -1,7 +1,11 @@
 import { readFile } from "node:fs/promises"
 import { build } from "esbuild"
 
-const zipLicense = await readFile(new URL("./node_modules/@zip.js/zip.js/LICENSE", import.meta.url), "utf8")
+const bundledPackages = ["@zip.js/zip.js", "parse5", "entities"]
+const licenses = await Promise.all(bundledPackages.map(async (name) => {
+  const license = await readFile(new URL(`./node_modules/${name}/LICENSE`, import.meta.url), "utf8")
+  return `${name}\n${license.trim()}`
+}))
 
 await build({
   entryPoints: ["src/main.ts"],
@@ -12,6 +16,6 @@ await build({
   format: "cjs",
   target: "es2022",
   minify: true,
-  banner: { js: `/*\n${zipLicense.trim()}\n*/` },
+  banner: { js: `/*\n${licenses.join("\n\n")}\n*/` },
   logLevel: "info",
 })

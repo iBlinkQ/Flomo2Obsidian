@@ -1,7 +1,7 @@
 {
   "id": "flomo-zip-import",
   "name": "Flomo ZIP Import",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "1.5.7",
   "description": "Import Flomo ZIP exports locally, preview Markdown and attachments, and save them to your vault or a ZIP.",
   "author": "iBlinkQ",

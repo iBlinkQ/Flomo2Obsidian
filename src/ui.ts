@@ -186,7 +186,7 @@ export class ImportModal extends Modal {
     this.error = "";
     this.render();
     try {
-      const archive = await FlomoArchive.open(file, this.contentEl.ownerDocument);
+      const archive = await FlomoArchive.open(file);
       if (this.closed) {
         await archive.close();
         return;
