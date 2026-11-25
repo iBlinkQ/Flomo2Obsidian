@@ -2,69 +2,68 @@
 
 <div align="center">
 
-**将你的 Flomo 笔记无缝转换为 Obsidian 格式**
+简体中文 · [English](README_EN.md)
 
-一个轻量化的 Obsidian 桌面插件，帮助你将 Flomo 的闪念笔记迁移到 Obsidian 知识库
+**将 Flomo 导出的笔记转换为 Obsidian Markdown，支持 Windows、macOS 和 Linux 桌面端**
 
-🔒 **100% 离线处理 · 数据安全无忧**
+🔒 **100% 本地离线解析 · 数据不离开你的设备**
 
-[安装插件](#安装插件) · [开始导入](#开始导入) · [下载 macOS 独立版](https://github.com/iBlinkQ/Flomo2Obsidian/releases/tag/1.3.0)
+[功能特性](#功能特性) · [安装插件](#安装插件) · [开始导入](#开始导入) · [笔记格式](#笔记格式) · [macOS 独立版](#macos-独立版)
 
 </div>
 
-![Flomo ZIP Import 的导入设置，可选日期范围、导入方式和目标文件夹](docs/screenshots/import-settings.png)
+![Flomo ZIP Import 导入设置界面：可选择日期范围、导入方式和目标文件夹](docs/screenshots/import-settings.png)
 
 ## 功能特性
 
-- 🔒 **100% 离线处理** - 所有数据转换均在本地完成，不会上传到任何服务器，保障笔记隐私安全
-- 📦 **一键导入** - 支持拖拽或选择 Flomo 导出的 ZIP 文件
-- 📅 **灵活的日期筛选** - 自由选择需要转换的笔记时间范围
-- 📝 **两种导入模式** - 支持「按天合并」和「按卡片独立」两种导入方式，适配不同笔记管理习惯
-- 🏷️ **Frontmatter 支持** - 自动生成 `created` 和 `type` 元数据，便于 Obsidian 检索和管理
-- 🖼️ **附件支持** - 自动处理并导入图片和语音（M4A）附件文件，语音以 Obsidian Callout 格式展示，并保留 Flomo 的语音转文字文本。附件位置遵循 Obsidian「文件与链接」中的设置
-- 👀 **实时预览** - 导入前可预览 Markdown 格式的笔记内容，查看文件名和附件位置
-- 📁 **直接写入仓库** - 可搜索并选择仓库里的目标文件夹，也可将转换结果另存为 ZIP
-
-<img width="400" alt="Obsidian 中的语音笔记，包含音频播放器和语音转文字" src="https://github.com/user-attachments/assets/87e124e9-008c-45fa-93ec-6978b2f8e57d" />
-
-## 隐私安全
-
-**你的笔记，只属于你自己**
-
-- ✅ **零网络传输** - 所有数据处理均在你的电脑本地完成
-- ✅ **无服务器交互** - 转换过程中不会连接任何远程服务器，不会上传任何数据
-- ✅ **无数据收集** - 插件不收集笔记内容或使用数据
-- ✅ **开源透明** - 代码完全开源，欢迎审查和验证
-- ✅ **本地存储** - 转换后的文件保存在你指定的本地位置
+- **全桌面端支持**：基于 Obsidian 桌面插件实现（需 Obsidian 1.5.7 及以上版本），原生支持 Windows、macOS 与 Linux，同时兼容 Flomo 免费账号导出的 ZIP 压缩包。
+- **100% 本地离线处理**：在本地直接解压与解析 Flomo HTML 导出文件，不加载外部资源、不发起任何网络请求，也不收集任何笔记或使用数据。
+- **灵活的日期筛选与导入模式**：支持按起止日期筛选笔记，提供「按天合并」与「按卡片独立」两种组织方式，并可在插件设置中配置默认导入方式与目标文件夹。
+- **完整保留元数据与附件**：自动生成 `created` 和 `type` Frontmatter；导入图片与音频附件（如 PNG、JPG、WebP、M4A、MP3 等），附件存放位置遵循 Obsidian「文件与链接」设置，语音笔记以折叠 Callout 展示音频播放器及 Flomo 原生语音转文字内容。
+- **导入前实时预览**：支持「阅读」与「Markdown 源码」双视图切换，可按需预览图片和播放音频，并在导入前查看重命名、缺失附件等提示。
+- **安全写入与断点续传**：绝不覆盖仓库中已有的同名文件（自动追加 `-2`、`-3` 编号并同步更新嵌入链接）；若导入中途中断，再次导入同一批次时会自动续传，避免重复生成。
+- **支持直接入库或导出 ZIP**：可直接写入当前 Obsidian 仓库指定文件夹，也可将转换结果（含 Markdown 与附件）另存为新的 ZIP 文件。
 
 ## 安装插件
 
-适用于桌面版 Obsidian 1.5.7 或更高版本。支持 Flomo 免费账号导出的 ZIP 文件。
+适用于桌面版 Obsidian 1.5.7 及以上版本（Windows、macOS、Linux），支持 Flomo 免费账号导出的 ZIP 文件。
 
-1. 打开要导入笔记的 Obsidian 仓库，进入「设置 → 第三方插件」。如果页面提示启用社区插件，先按提示启用。
+1. 打开要导入笔记的 Obsidian 仓库，进入「设置 → 第三方插件」。如果尚未开启社区插件，请先按提示启用。
 2. 点击「浏览」，搜索 **Flomo ZIP Import**。
-3. 打开插件页面，点击「安装」，然后点击「启用」。
+3. 打开插件详情页，点击「安装」，然后点击「启用」。
+
+<details>
+<summary>手动安装或从源码构建</summary>
+
+- **手动安装**：从 Releases 下载 `main.js`、`manifest.json` 和 `styles.css`，放入 `<你的仓库>/.obsidian/plugins/flomo-zip-import/` 目录，然后在 Obsidian 中刷新并启用插件。
+- **从源码构建**：在项目根目录执行：
+  ```bash
+  npm install && npm run build
+  ```
+  构建产物为根目录下的 `main.js`，配合 `manifest.json` 与 `styles.css` 即可加载。
+
+</details>
 
 ## 开始导入
 
-1. **在 Flomo 中导出笔记。** [Flomo 官方导出说明](https://help.flomoapp.com/basic/storage.html)
-2. **打开导入插件。** 在 Obsidian 左侧工具栏点击插件图标 <img src="docs/screenshots/ribbon-icon.png" width="20" height="20" alt="Flomo ZIP Import 插件图标" />，选择刚导出的 ZIP 文件。
-3. **预览并导入。** 选择日期范围、导入方式和目标文件夹，预览后点击「导入当前库」或「另存 ZIP…」。
+1. **在 Flomo 中导出笔记**：按照 [Flomo 官方导出说明](https://help.flomoapp.com/basic/storage.html) 导出你的笔记 ZIP 压缩包。
+2. **打开导入窗口**：在 Obsidian 左侧功能区点击插件图标 <img src="docs/screenshots/ribbon-icon.png" width="18" height="18" alt="Flomo ZIP Import 插件图标" />，拖拽或点击「选择 ZIP…」加载导出文件。
+3. **设置、预览并导入**：选择日期范围、导入方式（「按天合并」或「按卡片独立」）以及目标文件夹，点击「预览导入结果」确认内容后，点击「导入当前库」或「另存 ZIP…」。
 
-> 如果左侧工具栏被隐藏，Windows 按 `Ctrl + P`，macOS 按 `Command + P` 打开命令面板，搜索并运行「导入 Flomo 笔记」。
+> **提示**：如果左侧功能区被隐藏，可以按快捷键打开命令面板（Windows / Linux 为 `Ctrl + P`，macOS 为 `Command + P`），搜索并运行「**导入 Flomo 笔记**」；也可以在「设置 → 第三方插件 → Flomo ZIP Import」中点击「开始导入…」。
 
 <details>
 <summary>查看导入预览截图</summary>
 
-![Flomo ZIP Import 的导入预览，左侧列出待生成的文件，右侧显示卡片内容和附件](docs/screenshots/import-preview.png)
+![Flomo ZIP Import 导入预览界面：左侧列出待生成文件，右侧切换阅读与 Markdown 视图](docs/screenshots/import-preview.png)
 
 </details>
 
-## 📝 笔记格式说明
+## 笔记格式
 
-### 按天导出
+### 按天合并
 
-每个文件对应一天的笔记，文件名为 `YYYY-MM-DD.md`。
+同一天的所有笔记合并为一个 Markdown 文件，以日期命名（`YYYY-MM-DD.md`）。
 
 ```markdown
 ---
@@ -91,13 +90,13 @@ type: daily
 另一条笔记完整内容……
 ```
 
-- 每条笔记的第一行作为一级标题，超过 20 字会截断并显示 `…`。
-- 标题下方展示笔记完整内容（包含首行）。
-- 同一天的多条笔记按时间顺序排列，以 `---` 分隔。
+- 每条笔记的第一行作为一级标题（自动去掉标题中的 `#` 标签符号）；超过 20 个字符时自动截断并加上 `…`，若首行为空则使用 `无标题 YYYY-MM-DD HHMMSS`。
+- 一级标题下方保留完整的笔记正文（包含首行）。
+- 同一天的多条笔记按时间顺序排列，彼此之间用 `---` 分隔。
 
-### 按卡片导出
+### 按卡片独立
 
-每条笔记单独保存为一个文件，用正文的第一行做文件名。
+每条 Flomo 笔记单独保存为一个 `.md` 文件，使用正文第一行作为文件名。
 
 ```markdown
 ---
@@ -115,41 +114,40 @@ type: card_note
 ![](./Attachments/image.jpg)
 ```
 
-- 文件名自动清理非法字符，重名时自动编号。
-- 创建时间精确到秒。
+- 文件名截取前 20 个字符，自动清理系统非法字符并兼容 Windows 保留文件名，遇到重名文件时自动添加 `-2`、`-3` 编号。
+- Frontmatter 中的 `created` 时间精确到秒（`YYYY-MM-DD HH:mm:ss`）。
 
-### 通用
+### 通用规则
 
-- 示例中的附件存放在笔记旁边的 `Attachments` 子文件夹里。实际位置由 Obsidian「文件与链接」中的附件设置决定。
-- 语音 Callout 包含嵌入的音频文件和 Flomo 的语音转文字原文（无转文字时仅保留音频链接）。
-- 有序列表、无序列表和标签随正文保留。
-- Flomo 卡片引用保留完整网址，点击可回到 Flomo 查看原卡片。
+- **附件位置**：示例中的附件存放在 `Attachments` 子文件夹下，实际写入位置完全由当前仓库「设置 → 文件与链接」中的附件存放规则决定，并在正文中使用相对路径嵌入。
+- **语音笔记**：以 Obsidian 展开的 Callout（`> [!tip]+ 语音`）格式呈现，内嵌音频播放链接并保留 Flomo 的语音转文字原文（无转文字时仅保留音频链接）。
+- **正文细节**：保留原有的有序列表、无序列表、嵌套列表、`#标签` 以及 Flomo 原卡片链接（点击可跳转查看原卡片）。
+
+<img width="400" alt="Obsidian 中的语音笔记效果，包含音频播放器和语音转文字" src="https://github.com/user-attachments/assets/87e124e9-008c-45fa-93ec-6978b2f8e57d" />
+
+## 隐私与安全
+
+- **零网络请求与零遥测**：ZIP 解压（`@zip.js/zip.js`）、HTML 解析（`parse5`）和 Markdown 转换全部在你的电脑本地内存中完成，完全断网也能正常使用。
+- **安全解析**：在解析 Flomo HTML 时不创建浏览器 DOM，不执行脚本，也不会加载任何外部资源；禁止写入 `.obsidian` 配置目录，且永不覆盖仓库现有文件。
+- **代码开源透明**：所有源码均在本仓库公开，欢迎随时审计和检查。
 
 ## macOS 独立版
 
-另有 macOS 独立应用可下载。
+如果你使用 macOS 13.0 (Ventura) 及以上版本，且更希望使用独立原生桌面应用而不安装 Obsidian 插件，可以继续下载之前的 macOS 独立版（v1.3.0）。
 
 [下载 macOS 独立版 1.3.0](https://github.com/iBlinkQ/Flomo2Obsidian/releases/tag/1.3.0) · [查看独立版使用说明](https://github.com/iBlinkQ/Flomo2Obsidian/blob/1.3.0/README.md)
 
 ![Flomo2Obsidian macOS 独立版界面](https://github.com/user-attachments/assets/3df5e7ca-de3f-487e-8f9c-1c495e2bd147)
 
-## English overview
-
-Flomo ZIP Import is a desktop plugin for importing Flomo ZIP exports into Obsidian. It converts notes locally into Markdown and preserves images, audio recordings, and existing transcripts. Preview the generated files, then import them into your vault or save them as a ZIP archive. You can group notes by date or import each card as a separate note.
-
-## 🤝 贡献
+## 反馈与贡献
 
 欢迎提交 Issue 和 Pull Request！
 
-反馈问题时，可附上系统版本、Obsidian 版本、插件版本和复现步骤。涉及笔记内容时，请用脱敏示例。 [提交 Issue](https://github.com/iBlinkQ/Flomo2Obsidian/issues)
+提交问题反馈时，建议附上操作系统版本、Obsidian 版本、插件版本以及复现步骤。如涉及笔记导出内容，请先做脱敏处理。[前往提交 Issue](https://github.com/iBlinkQ/Flomo2Obsidian/issues)
 
-## 📄 开源协议
+## 开源协议
 
-本项目采用 [MIT 协议](LICENSE)开源。
-
-## 💝 致谢
-
-感谢 Flomo 和 Obsidian 两个优秀的笔记工具，让知识管理变得更加美好。
+本项目基于 [MIT 协议](LICENSE) 开源。感谢 Flomo 和 Obsidian，让碎片记录与长期知识整理顺畅衔接。
 
 ---
 
