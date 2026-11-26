@@ -198,7 +198,7 @@ export class FlomoArchive {
         archive.notes.push(...notes);
         archive.skipped += skipped;
       }
-      if (!archive.notes.length) throw new Error("ZIP 中未识别到有效的 Flomo 笔记，请检查导出文件。");
+      if (!archive.notes.length) throw new Error("ZIP 中未识别到有效的 flomo 笔记，请检查导出文件。");
       archive.notes.sort((left, right) => left.timestamp.localeCompare(right.timestamp));
       return archive;
     } catch (error) {

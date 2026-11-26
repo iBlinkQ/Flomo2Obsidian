@@ -1,9 +1,13 @@
-import { App, FuzzySuggestModal, Modal, Notice, TFile, TFolder, setIcon } from "obsidian";
+import { App, FileSystemAdapter, FuzzySuggestModal, Modal, Notice, TFile, TFolder, setIcon } from "obsidian";
 import { FlomoArchive, mediaMime, type Media } from "./archive";
 import {
-  basename, folderPath, noteTitle, noteTypes, renderMarkdown, sameDestinations, selectNotes,
+  basename, cardTime, folderPath, modeLabels, noteTitle, noteTypes, parentPath, renderMarkdown, sameDestinations, selectNotes,
   type ImportOptions, type ImportPlan, type Mode, type PlannedNote,
 } from "./conversion";
+import {
+  countFlomoLinks, followupPrompt, followupWarning, linkTaskTitle, titleTaskDescription, titleTaskTitle,
+  type BatchLocation, type FollowupTask,
+} from "./followup";
 import { exportZip, Importer, type ImportResult, type Progress } from "./importer";
 
 type Stage = "source" | "options" | "preview" | "result";
@@ -50,6 +54,8 @@ export class ImportModal extends Modal {
   private error = "";
   private plan?: ImportPlan;
   private result?: ImportResult;
+  private followup?: { task: FollowupTask; batch: BatchLocation };
+  private links = { occurrences: 0, targets: 0 };
   private selected = 0;
   private raw = false;
   private readonly mediaUrls = new Set<string>();
@@ -58,6 +64,7 @@ export class ImportModal extends Modal {
     app: App,
     private readonly importer: Importer,
     defaults: Pick<ImportOptions, "mode" | "folder">,
+    private readonly recordPath: string,
     private readonly didClose: () => void,
   ) {
     super(app);
@@ -66,7 +73,7 @@ export class ImportModal extends Modal {
 
   onOpen(): void {
     this.modalEl.addClass("flomo-import-modal");
-    this.setTitle("导入 Flomo 笔记");
+    this.setTitle("导入 flomo 笔记");
     this.render();
   }
 
@@ -87,16 +94,7 @@ export class ImportModal extends Modal {
     this.revokeMedia();
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createDiv({ cls: "flomo-vault-name", text: `当前仓库 · ${this.app.vault.getName()}` });
-    const steps = contentEl.createEl("ol", { cls: "flomo-step-list", attr: { "aria-label": "导入步骤" } });
-    const current = { source: 0, options: 1, preview: 2, result: 2 }[this.stage];
-    ["选文件", "导入设置", "预览结果"].forEach((label, index) => {
-      const step = steps.createEl("li");
-      step.createSpan({ cls: "flomo-step-number", text: String(index + 1) });
-      step.createSpan({ text: label });
-      if (index === current) step.setAttribute("aria-current", "step");
-      else if (index < current) step.addClass("flomo-step-done");
-    });
+    if (this.stage !== "result") this.renderSteps(this.stage);
     if (this.error) contentEl.createDiv({ cls: "flomo-error", text: this.error, attr: { role: "alert" } });
     if (this.operation) {
       const progress = contentEl.createDiv({ cls: "flomo-progress", attr: { role: "status" } });
@@ -109,8 +107,23 @@ export class ImportModal extends Modal {
       case "source": this.renderSource(); break;
       case "options": this.renderOptions(); break;
       case "preview": this.renderPreview(); break;
-      case "result": this.renderResult();
+      case "result":
+        if (this.followup) this.renderFollowupPrompt(this.followup.task, this.followup.batch);
+        else this.renderResult();
     }
+  }
+
+  private renderSteps(stage: Exclude<Stage, "result">): void {
+    this.contentEl.createDiv({ cls: "flomo-vault-name", text: `当前仓库 · ${this.app.vault.getName()}` });
+    const steps = this.contentEl.createEl("ol", { cls: "flomo-step-list", attr: { "aria-label": "导入步骤" } });
+    const current = { source: 0, options: 1, preview: 2 }[stage];
+    ["选文件", "导入设置", "预览结果"].forEach((label, index) => {
+      const step = steps.createEl("li");
+      step.createSpan({ cls: "flomo-step-number", text: String(index + 1) });
+      step.createSpan({ text: label });
+      if (index === current) step.setAttribute("aria-current", "step");
+      else if (index < current) step.addClass("flomo-step-done");
+    });
   }
 
   private setStage(stage: Stage): void {
@@ -141,7 +154,7 @@ export class ImportModal extends Modal {
     const drop = this.contentEl.createDiv({ cls: "flomo-drop" });
     const icon = drop.createSpan({ cls: "flomo-drop-icon" });
     setIcon(icon, "file-archive");
-    drop.createEl("h3", { text: "选择 Flomo 导出的 ZIP" });
+    drop.createEl("h3", { text: "选择 flomo 导出的 ZIP" });
     drop.createEl("p", { cls: "flomo-secondary", text: this.loading ? "正在读取 ZIP…" : "可直接把 ZIP 拖到这里。" });
     const input = drop.createEl("input", { attr: { type: "file", accept: ".zip,application/zip", hidden: "" } });
     const choose = this.button(drop, "选择 ZIP…", () => input.click(), true);
@@ -178,7 +191,7 @@ export class ImportModal extends Modal {
   private async load(file: File): Promise<void> {
     if (this.loading || this.operation) return;
     if (!/\.zip$/i.test(file.name)) {
-      this.report(new Error("请选择 Flomo 导出的 ZIP 文件。"));
+      this.report(new Error("请选择 flomo 导出的 ZIP 文件。"));
       return;
     }
     const previous = this.archive;
@@ -212,7 +225,7 @@ export class ImportModal extends Modal {
     const end = archive.notes.at(-1)!.timestamp.slice(0, 10);
     const summary = this.contentEl.createDiv({ cls: "flomo-source-summary" });
     summary.createEl("strong", { text: this.source });
-    summary.createDiv({ cls: "flomo-secondary", text: `${archive.notes.length} 条笔记 · ${start} 至 ${end}` });
+    summary.createDiv({ cls: "flomo-secondary", text: `${archive.notes.length} 篇笔记 · ${start} 至 ${end}` });
     if (archive.skipped) summary.createDiv({ cls: "flomo-warning", text: `${archive.skipped} 条记录的内容或时间无法识别。` });
 
     const dates = this.contentEl.createEl("fieldset", { cls: "flomo-fieldset" });
@@ -233,8 +246,8 @@ export class ImportModal extends Modal {
     modes.createEl("legend", { text: "导入方式" });
     const modeRow = modes.createDiv({ cls: "flomo-mode" });
     const buttons = new Map<Mode, HTMLButtonElement>();
-    for (const [mode, label] of [["day", "按天合并"], ["card", "按卡片独立"]] as const) {
-      buttons.set(mode, this.button(modeRow, label, () => {
+    for (const mode of ["day", "card"] as const) {
+      buttons.set(mode, this.button(modeRow, modeLabels[mode], () => {
         this.options.mode = mode;
         update();
       }));
@@ -274,13 +287,13 @@ export class ImportModal extends Modal {
       const count = modal.options.mode === "day" ? new Set(selected.map((note) => note.timestamp.slice(0, 10))).size : selected.length;
       const assets = new Set(selected.flatMap((note) => note.media.flatMap((media) => media.entry ? [media.entry] : []))).size;
       for (const [mode, button] of buttons) button.setAttribute("aria-pressed", String(mode === modal.options.mode));
-      modeHint.setText(modal.options.mode === "day" ? "同一天的笔记合在一个文件中，以日期命名。" : "每条笔记单独保存为一个文件，用正文的第一行做文件名。");
+      modeHint.setText(modal.options.mode === "day" ? "同一天的笔记合在一个文件中，以日期命名。" : "每篇笔记单独保存为一个文件，用正文的第一行做文件名。");
       const warning = !from.value || !to.value || from.value > to.value ? "请选择有效的起止日期。"
         : destination === undefined ? "请输入有效的库内文件夹路径。"
         : !selected.length ? "所选日期没有笔记。" : "";
       issue.setText(warning);
       issue.hidden = !warning;
-      stats.setText(`${selected.length} 条 Flomo 笔记 → ${count} 个笔记文件 · ${assets} 个附件`);
+      stats.setText(`${selected.length} 篇 flomo 笔记 → ${count} 个笔记文件 · ${assets} 个附件`);
       next.disabled = Boolean(warning);
     }
     // Initialize after modal and all controls exist.
@@ -351,7 +364,10 @@ export class ImportModal extends Modal {
     el.createDiv({ cls: "flomo-secondary", text: `created  ${file.created}  ·  type  ${noteTypes[plan.options.mode]}` });
     for (const [index, card] of file.notes.entries()) {
       if (index) el.createEl("hr");
-      if (plan.options.mode === "day") el.createEl("h3", { text: noteTitle(card) });
+      if (plan.options.mode === "day") {
+        el.createEl("h3", { text: noteTitle(card) });
+        el.createDiv({ cls: "flomo-secondary", text: cardTime(card) });
+      }
       if (card.content) el.createEl("p", { cls: "flomo-note-text", text: card.content });
       for (const media of card.media) {
         const path = media.entry ? plan.attachmentPaths.get(media.entry) : undefined;
@@ -416,6 +432,7 @@ export class ImportModal extends Modal {
       }
       this.plan = latest;
       this.result = await this.importer.write(this.archive, latest, this.progress);
+      if (!this.result.failures.length) this.links = countFlomoLinks(latest.files.flatMap(({ notes }) => notes));
       this.stage = "result";
     } catch (error) {
       this.error = error instanceof Error ? error.message : String(error);
@@ -472,9 +489,18 @@ export class ImportModal extends Modal {
   private renderResult(): void {
     const result = this.result!;
     const plan = this.plan!;
-    this.contentEl.createEl("h3", { text: result.failures.length ? "部分文件尚未导入" : "导入完成" });
+    const completed = !result.failures.length;
+    const firstFolder = result.files[0] === undefined ? plan.options.folder : parentPath(result.files[0]);
+    const folder = completed && result.files.every((path) => parentPath(path) === firstFolder) ? firstFolder : plan.options.folder;
+    const heading = this.contentEl.createDiv({ cls: "flomo-result-heading" });
+    if (completed) setIcon(heading.createSpan({ cls: "flomo-result-check", attr: { "aria-hidden": "true" } }), "check");
+    const headingText = heading.createDiv();
+    headingText.createEl("h3", { text: completed ? "导入完成" : "部分文件尚未导入" });
+    if (completed) headingText.createDiv({ cls: "flomo-secondary", text:
+      `已导入 ${plan.noteCount} 篇笔记，${plan.options.mode === "day" ? "合并为" : "生成"} ${result.files.length} 个笔记文件。`,
+    });
     const summary = this.contentEl.createDiv({ cls: "flomo-source-summary" });
-    summary.createDiv({ text: `笔记 · ${folderLabel(plan.options.folder)} · ${result.files.length} 个文件` });
+    summary.createDiv({ text: `仓库 · ${this.app.vault.getName()} · 文件夹 · ${folderLabel(folder)}` });
     if (result.assets.length) summary.createDiv({ text: `附件 · ${folderLabel(plan.attachmentFolder)} · ${result.assets.length} 个附件` });
     if (plan.missing) summary.createDiv({ cls: "flomo-warning", text: `源 ZIP 中有 ${plan.missing} 个缺失附件。` });
     if (result.failures.length) {
@@ -498,8 +524,103 @@ export class ImportModal extends Modal {
         }
       }
     }
+    const { adapter } = this.app.vault;
+    if (completed && result.files.length && adapter instanceof FileSystemAdapter) {
+      this.renderFollowupActions({
+        vaultName: this.app.vault.getName(),
+        vaultPath: adapter.getBasePath(),
+        folderPath: folder ? adapter.getFullPath(folder) : adapter.getBasePath(),
+        recordPath: adapter.getFullPath(this.recordPath),
+        batchId: plan.key,
+      });
+    }
     const actions = this.footer();
-    if (result.failures.length) this.button(actions, "重试导入", () => void this.write());
+    if (!completed) this.button(actions, "重试导入", () => void this.write());
     this.button(actions, "完成", () => this.close(), true);
+  }
+
+  private renderFollowupActions(batch: BatchLocation): void {
+    const plan = this.plan!;
+    const section = this.contentEl.createEl("section", { cls: "flomo-followup" });
+    const heading = section.createEl("h4", { cls: "flomo-followup-heading" });
+    setIcon(heading.createSpan({ cls: "flomo-followup-sparkles", attr: { "aria-hidden": "true" } }), "sparkles");
+    heading.createSpan({ text: "还可以让智能体继续整理导入的笔记" });
+    section.createEl("p", { cls: "flomo-secondary", text: "复制一项提示词，交给你常用的智能体。你可以先查看它准备怎么改。" });
+    const list = section.createDiv({ cls: "flomo-followup-tasks" });
+
+    const taskRow = (task: FollowupTask, title: string, description: string, icon: string, count: number) => {
+      const group = list.createDiv({ cls: "flomo-followup-task" });
+      const row = group.createDiv({ cls: "flomo-followup-row" });
+      setIcon(row.createSpan({ cls: "flomo-followup-icon", attr: { "aria-hidden": "true" } }), icon);
+      const copy = row.createDiv();
+      copy.createDiv({ cls: "flomo-followup-task-title", text: title });
+      copy.createDiv({ cls: "flomo-secondary", text: description });
+      const button = this.button(row, "查看提示词", () => {
+        this.followup = { task, batch };
+        this.render();
+        this.contentEl.querySelector<HTMLElement>(".flomo-followup-prompt-title")?.focus();
+      });
+      button.setAttribute("aria-label", task === "links" ? "查看链接转化提示词" : "查看标题整理提示词");
+      button.dataset.flomoFollowup = task;
+      this.renderFollowupWarning(group, task, count);
+    };
+
+    if (this.links.targets) taskRow("links", linkTaskTitle,
+      `${this.links.occurrences} 处 flomo 链接，指向 ${this.links.targets} 篇不同的笔记。`, "arrow-up-right", this.links.targets);
+    taskRow("titles", titleTaskTitle, titleTaskDescription(plan.options.mode), "case-sensitive", plan.noteCount);
+  }
+
+  private renderFollowupWarning(parent: HTMLElement, task: FollowupTask, count: number): void {
+    const warning = followupWarning(task, count);
+    if (warning) parent.createEl("p", { cls: "flomo-followup-warning", text: warning });
+  }
+
+  private renderFollowupPrompt(task: FollowupTask, batch: BatchLocation): void {
+    const plan = this.plan!;
+    const links = task === "links";
+    const content = this.contentEl.createDiv({ cls: "flomo-followup-prompt" });
+    content.createEl("h3", { cls: "flomo-followup-prompt-title", text: links ? linkTaskTitle : titleTaskTitle, attr: { tabindex: "-1" } });
+    content.createEl("p", { cls: "flomo-secondary", text: links
+      ? "智能体会查找链接对应的笔记，先给你看准备替换哪些链接。" : titleTaskDescription(plan.options.mode),
+    });
+    content.createDiv({ cls: "flomo-source-summary", text: `仓库 · ${batch.vaultName} · 范围 · ${links
+      ? `${this.links.targets} 篇目标笔记` : `${plan.noteCount} 篇已导入笔记`}` });
+    this.renderFollowupWarning(content, task, links ? this.links.targets : plan.noteCount);
+
+    if (!links && plan.options.mode === "day") {
+      const example = content.createDiv({ cls: "flomo-title-example" });
+      example.createDiv({ cls: "flomo-secondary", text: "标题显示示例 · 2026-03-03" });
+      for (const [title, time] of [["为什么按项目整理笔记", "14:30:08"], ["复盘时要问的三个问题", "16:12:30"]]) {
+        const card = example.createDiv({ cls: "flomo-title-example-card" });
+        card.createEl("strong", { text: title });
+        card.createEl("time", { cls: "flomo-secondary", text: time, attr: { datetime: time } });
+      }
+    }
+
+    content.createEl("label", { text: "提示词", attr: { for: "flomo-followup-text" } });
+    const prompt = content.createEl("textarea", { attr: { id: "flomo-followup-text", readonly: "", spellcheck: "false" } });
+    prompt.value = followupPrompt(task, plan.options.mode, batch);
+    const actions = this.footer();
+    const status = actions.parentElement!.createSpan({ cls: "flomo-secondary", attr: { role: "status" } });
+    actions.before(status);
+    this.button(actions, "返回导入结果", () => {
+      this.followup = undefined;
+      this.render();
+      this.contentEl.querySelector<HTMLButtonElement>(`[data-flomo-followup="${task}"]`)?.focus();
+    });
+    this.button(actions, "复制提示词", () => void this.copyPrompt(prompt, status), true);
+  }
+
+  private async copyPrompt(prompt: HTMLTextAreaElement, status: HTMLElement): Promise<void> {
+    try {
+      const clipboard = prompt.ownerDocument.defaultView?.navigator.clipboard;
+      if (!clipboard) throw new Error("Clipboard unavailable");
+      await clipboard.writeText(prompt.value);
+      status.setText("提示词已复制，可粘贴到智能体。");
+    } catch {
+      prompt.focus();
+      prompt.select();
+      status.setText("提示词已选中，请用系统快捷键复制。");
+    }
   }
 }

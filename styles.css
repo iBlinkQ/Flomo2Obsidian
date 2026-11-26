@@ -219,6 +219,106 @@
   overflow-wrap: anywhere;
   text-align: start;
 }
+.flomo-import-modal .flomo-result-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.flomo-import-modal .flomo-result-heading h3,
+.flomo-import-modal .flomo-followup-heading,
+.flomo-import-modal .flomo-followup-prompt h3 {
+  margin: 0;
+}
+.flomo-import-modal :is(.flomo-result-check, .flomo-followup-icon) {
+  display: inline-grid;
+  place-items: center;
+  background: var(--background-secondary);
+  color: var(--text-accent);
+}
+.flomo-import-modal .flomo-result-check {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 50%;
+}
+.flomo-import-modal .flomo-followup {
+  margin-top: 17px;
+}
+.flomo-import-modal .flomo-followup-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.flomo-import-modal .flomo-followup-sparkles {
+  display: inline-flex;
+  color: var(--text-accent);
+  flex-shrink: 0;
+}
+.flomo-import-modal .flomo-followup > p {
+  margin: 4px 0 10px;
+}
+.flomo-import-modal :is(.flomo-followup-tasks, .flomo-title-example) {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+}
+.flomo-import-modal .flomo-followup-task + .flomo-followup-task {
+  border-top: 1px solid var(--background-modifier-border);
+}
+.flomo-import-modal .flomo-followup-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 11px 12px;
+}
+.flomo-import-modal .flomo-followup-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-s);
+}
+.flomo-import-modal .flomo-followup-task-title {
+  font-weight: var(--font-semibold);
+  overflow-wrap: anywhere;
+}
+.flomo-import-modal .flomo-followup-warning {
+  padding: 8px 11px;
+  border-radius: var(--radius-s);
+  background: var(--background-secondary);
+  background: color-mix(in srgb, var(--text-warning, #a76b14) 13%, var(--background-primary));
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  margin: 0 12px 10px 52px;
+}
+.flomo-import-modal .flomo-followup-prompt {
+  display: grid;
+  gap: 9px;
+}
+.flomo-import-modal .flomo-followup-prompt > p {
+  margin: 0;
+}
+.flomo-import-modal .flomo-title-example {
+  padding: 8px 12px;
+}
+.flomo-import-modal .flomo-title-example-card {
+  display: grid;
+  gap: 2px;
+  padding: 5px 0;
+}
+.flomo-import-modal .flomo-title-example-card + .flomo-title-example-card {
+  border-top: 1px solid var(--background-modifier-border);
+}
+.flomo-import-modal .flomo-followup-prompt label {
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-semibold);
+}
+.flomo-import-modal .flomo-followup-prompt textarea {
+  width: 100%;
+  min-height: 96px;
+  height: clamp(120px, 28vh, 250px);
+  resize: vertical;
+  line-height: 1.5;
+}
 @media (max-width: 470px) {
   .flomo-import-modal .flomo-review {
     grid-template-columns: minmax(0, 1fr);
@@ -227,6 +327,13 @@
     max-height: 100px;
     border-inline-end: 0;
     border-bottom: 1px solid var(--background-modifier-border);
+  }
+  .flomo-import-modal .flomo-followup-row {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+  .flomo-import-modal .flomo-followup-row button {
+    grid-column: 2;
+    justify-self: start;
   }
 }
 @media (max-height: 500px) {

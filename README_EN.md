@@ -18,11 +18,12 @@
 
 - **Cross-platform desktop plugin**: Built for desktop Obsidian (1.5.7 or later) on Windows, macOS, and Linux, supporting ZIP exports from free Flomo accounts as well as Pro accounts.
 - **100% local and offline**: Reads the ZIP archive and parses Flomo HTML locally in memory, with zero network requests, zero telemetry, and no external resource loading.
-- **Flexible date filtering and two import modes**: Filter notes by start and end dates, choose between merging notes by day or saving one file per card, and configure default mode and folder preferences in plugin settings.
+- **Flexible date filtering and two import modes**: Filter notes by start and end dates, choose between merging notes by day or saving one file per note, and configure default mode and folder preferences in plugin settings.
 - **Frontmatter and attachment support**: Generates `created` and `type` frontmatter automatically. Imports images and audio attachments (PNG, JPG, WebP, M4A, MP3, and more) according to your Obsidian "Files and links" attachment setting, rendering voice notes inside a callout with an embedded audio player and Flomo transcript.
 - **Live dual-view preview**: Switch between Reading view and raw Markdown before writing anything, preview images and audio on demand, and review filename collision or missing attachment notices up front.
 - **Non-destructive and resumable imports**: Never overwrites existing files in your vault (collisions are numbered `-2`, `-3` with links updated). Tracks import batches so an interrupted import can pick up cleanly without creating duplicates.
 - **Import to vault or export as ZIP**: Write converted Markdown files and attachments directly into a chosen vault folder, or export the whole result as a new ZIP archive.
+- **Optional follow-up with your own agent**: Copy a prompt for this import to turn flomo links into Obsidian internal links or generate titles from the note content.
 
 ## Installation
 
@@ -50,9 +51,9 @@ Requires desktop Obsidian 1.5.7 or later (Windows, macOS, or Linux) and a ZIP ex
 
 1. **Export your notes from Flomo**: Follow the [official Flomo export guide](https://help.flomoapp.com/basic/storage.html) to download your ZIP archive.
 2. **Open the importer**: Click the ribbon icon <img src="docs/screenshots/ribbon-icon.png" width="18" height="18" alt="Flomo ZIP Import ribbon icon" /> in the left sidebar, then drag and drop your ZIP file or click **选择 ZIP…** (Choose ZIP).
-3. **Configure, preview, and import**: Set your date range, import mode (**按天合并** / Merge by day, or **按卡片独立** / One file per card), and target folder (**目标文件夹**). Click **预览导入结果** (Preview import) to inspect the output, then choose **导入当前库** (Import to vault) or **另存 ZIP…** (Save as ZIP).
+3. **Configure, preview, and import**: Set your date range, import mode (**按天合并** / Merge by day, or **按篇独立** / One file per note), and target folder (**目标文件夹**). Click **预览导入结果** (Preview import) to inspect the output, then choose **导入当前库** (Import to vault) or **另存 ZIP…** (Save as ZIP).
 
-> **Tip**: If the ribbon is hidden, open the Command Palette (`Ctrl + P` on Windows/Linux, `Cmd + P` on macOS) and run **导入 Flomo 笔记** (Import Flomo Notes), or open the plugin settings tab and click **开始导入…** (Start import).
+> **Tip**: If the ribbon is hidden, open the Command Palette (`Ctrl + P` on Windows/Linux, `Cmd + P` on macOS) and run **导入 flomo 笔记** (Import flomo notes), or open the plugin settings tab and click **开始导入…** (Start import).
 
 <details>
 <summary>View import preview screenshot</summary>
@@ -60,6 +61,17 @@ Requires desktop Obsidian 1.5.7 or later (Windows, macOS, or Linux) and a ZIP ex
 ![Flomo ZIP Import preview screen showing planned files on the left and rendered or Markdown preview on the right](docs/screenshots/import-preview.png)
 
 </details>
+
+### Organize notes with your agent (optional)
+
+After importing, click **查看提示词** (View prompt) next to the task you want, then copy the prompt to your preferred agent, such as Codex or WorkBuddy.
+
+![Obsidian import completion screen with link conversion and title generation options](docs/screenshots/post-import-followup.png)
+
+- **Convert flomo links into Obsidian internal links.** A flomo ZIP export does not list the ID of each exported note, so the importer cannot directly match a link to its destination. In a browser where you are signed in to flomo, your agent can open the original note, match its text and creation time to a note in this import, and create an Obsidian internal link. Unmatched links keep their original URLs.
+- **Organize note titles.** Use AI to generate titles based on the text of each note.
+
+For larger batches, the completion screen shows a usage notice.
 
 ## Output format
 
@@ -75,6 +87,8 @@ type: daily
 
 # First line of the note
 
+14:30:08 ^flomo-0001
+
 First line of the note
 Full body of the note...
 
@@ -88,15 +102,17 @@ Full body of the note...
 
 # Second note title
 
+16:12:30 ^flomo-0002
+
 Second note title
 Full body of the second note...
 ```
 
 - Each note's first line becomes an H1 heading (tag `#` prefixes are stripped in the heading, truncated at 20 characters with `…`; empty first lines fall back to `无标题 YYYY-MM-DD HHMMSS`).
-- The full note content (including the first line) appears below the heading.
+- The note’s original timestamp and full content (including the first line) appear below the heading. The timestamp line has a stable block ID that an Obsidian internal link can jump to.
 - Multiple notes on the same day are sorted chronologically and separated by `---`.
 
-### One file per card
+### One file per note
 
 Each note is saved as its own `.md` file, named after its first line.
 
@@ -123,13 +139,14 @@ Full body of the note...
 
 - **Attachment location**: Attachments in the examples above live in an `Attachments` subfolder. Actual placement follows your vault's **Files and links** attachment setting, referenced with relative Markdown links.
 - **Voice notes**: Rendered as an expanded Obsidian callout (`> [!tip]+ 语音`) containing the embedded audio link and the original Flomo transcript if present.
-- **Formatting**: Ordered, unordered, and nested lists, `#tags`, and links back to original Flomo cards are preserved.
+- **Formatting**: Ordered, unordered, and nested lists, `#tags`, and links back to the original flomo notes are preserved.
 
 <img width="400" alt="Voice note in Obsidian showing the audio player and transcript inside a callout" src="https://github.com/user-attachments/assets/87e124e9-008c-45fa-93ec-6978b2f8e57d" />
 
 ## Privacy and safety
 
 - **No network calls or telemetry**: ZIP extraction (`@zip.js/zip.js`), HTML parsing (`parse5`), and Markdown generation run completely offline on your computer.
+- **Your choice of agent**: Once you paste a prompt into an agent, that tool determines how it processes your notes.
 - **Safe parsing and writes**: Flomo HTML is parsed structurally without constructing a browser DOM, running scripts, or fetching remote assets. The importer blocks writes into `.obsidian` configuration directories and never overwrites existing vault files.
 - **Open source**: The full source code is available in this repository for inspection.
 

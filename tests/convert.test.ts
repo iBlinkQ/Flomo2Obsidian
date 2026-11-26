@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { BlobWriter, TextReader, ZipWriter } from "@zip.js/zip.js";
 import { FlomoArchive, parseFlomoHtml } from "../src/archive";
-import { attachmentDirectory, batchKey, buildPlan, folderPath, renderMarkdown, selectNotes } from "../src/conversion";
+import {
+  attachmentDirectory, batchKey, buildPlan, folderPath, renderMarkdown, selectNotes, updateCompletedImportPaths,
+} from "../src/conversion";
 
 const member = (time: string, text: string, media = "") =>
   `<div class="memo"><div class="time">${time}</div><div class="content">${text}</div>${media}</div>`;
@@ -60,6 +62,9 @@ test("deduplicates filenames, preserves attachment links, and groups by selected
   const markdown = renderMarkdown(day.files[0], day);
   assert.equal(markdown.split("\n\n", 1)[0], "---\ncreated: 2026-11-19\ntype: daily\n---");
   assert.match(markdown, /# 第一条/);
+  assert.match(markdown, /# 第一条\n\n09:03:00 \^flomo-0001\n\n第一条/);
+  assert.match(markdown, /\n---\n\n# 第一条\n\n23:59:59 \^flomo-0002\n\n第一条/);
+  assert.doesNotMatch(renderMarkdown(day.files[0], day, "legacy"), /\^flomo-/);
   assert.match(markdown, /> \[!tip\]\+ 语音\n> !\[\]\(\.\.\/%E7%B4%A0%E6%9D%90\/%E9%9F%B3%E9%A2%91-2\.m4a\)\n> 第一行\n> 第二行/);
   assert.doesNotMatch(markdown, /example.invalid/);
   const card = buildPlan("card", notes, { ...options, mode: "card" }, "./附件", []);
@@ -67,4 +72,32 @@ test("deduplicates filenames, preserves attachment links, and groups by selected
   const cardMarkdown = renderMarkdown(card.files[1], card);
   assert.equal(cardMarkdown.split("\n\n", 1)[0], "---\ncreated: 2026-11-19 23:59:59\ntype: card_note\n---");
   assert.ok(cardMarkdown.includes("![](./%E9%99%84%E4%BB%B6/%E9%9F%B3%E9%A2%91.m4a)"));
+  assert.doesNotMatch(cardMarkdown, /\^flomo-/);
+});
+
+test("keeps daily anchors unique even when a card contains an existing block ID", () => {
+  const notes = [
+    { timestamp: "2026-11-19 09:03:00", content: "原有内容 ^flomo-0001", media: [] },
+    { timestamp: "2026-11-19 09:03:00", content: "同一时间的另一张卡片", media: [] },
+  ];
+  const options = { start: "2026-11-19", end: "2026-11-19", mode: "day", folder: "日记" } as const;
+  const plan = buildPlan("day", notes, options, "", []);
+  const markdown = renderMarkdown(plan.files[0], plan);
+  assert.match(markdown, /09:03:00 \^flomo-0002/);
+  assert.match(markdown, /09:03:00 \^flomo-0003/);
+  assert.match(markdown, /原有内容 \^flomo-0001/);
+});
+
+test("updates completed batch paths after renames and leaves interrupted imports intact", () => {
+  const records = {
+    ready: { notes: ["Flomo/A.md", "Flomo Other/A.md"], attachments: { img: "Flomo/Attachments/img.png" }, completed: true },
+    pending: { notes: ["Flomo/A.md"], attachments: { img: "Flomo/Attachments/img.png" }, completed: false },
+  };
+  assert.equal(updateCompletedImportPaths(records, "Flomo/A.md", "Flomo/新标题.md", false), true);
+  assert.deepEqual(records.ready.notes, ["Flomo/新标题.md", "Flomo Other/A.md"]);
+  assert.equal(updateCompletedImportPaths(records, "Flomo", "归档/Flomo", true), true);
+  assert.deepEqual(records.ready.notes, ["归档/Flomo/新标题.md", "Flomo Other/A.md"]);
+  assert.equal(records.ready.attachments.img, "归档/Flomo/Attachments/img.png");
+  assert.deepEqual(records.pending.notes, ["Flomo/A.md"]);
+  assert.equal(updateCompletedImportPaths(records, "Elsewhere.md", "New.md", false), false);
 });

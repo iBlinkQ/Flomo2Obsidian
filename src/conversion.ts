@@ -2,6 +2,7 @@ import type { FlomoArchive, FlomoNote, Media } from "./archive";
 
 export type Mode = "day" | "card";
 
+export const modeLabels = { day: "按天合并", card: "按篇独立" } as const;
 export const noteTypes = { day: "daily", card: "card_note" } as const;
 
 export interface ImportOptions {
@@ -39,6 +40,36 @@ export const joinPath = (...parts: string[]) => parts.filter(Boolean).join("/");
 export const basename = (path: string) => path.slice(path.lastIndexOf("/") + 1);
 export const parentPath = (path: string) => path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
 export const pathKey = (path: string) => path.normalize("NFC").toLowerCase();
+export const cardTime = (note: FlomoNote) => note.timestamp.slice(11);
+
+export function updateCompletedImportPaths(
+  records: Record<string, ImportRecord>, oldPath: string, newPath: string, folder: boolean,
+): boolean {
+  if (oldPath === newPath) return false;
+  const folderPrefix = `${oldPath}/`;
+  function updatedPath(path: string): string {
+    if (path === oldPath) return newPath;
+    return folder && path.startsWith(folderPrefix) ? newPath + path.slice(oldPath.length) : path;
+  }
+
+  let changed = false;
+  for (const record of Object.values(records)) {
+    if (!record.completed) continue;
+    for (const [index, path] of record.notes.entries()) {
+      const next = updatedPath(path);
+      if (next === path) continue;
+      record.notes[index] = next;
+      changed = true;
+    }
+    for (const [entry, path] of Object.entries(record.attachments)) {
+      const next = updatedPath(path);
+      if (next === path) continue;
+      record.attachments[entry] = next;
+      changed = true;
+    }
+  }
+  return changed;
+}
 
 const windowsDevice = /^(?:con|prn|aux|nul|(?:com|lpt)[0-9¹²³])(?:\.|$)/i;
 const pathCharacters = /[<>:"\\|?*\x00-\x1f]/;
@@ -180,9 +211,28 @@ function renderMedia(file: PlannedNote, media: Media, paths: ReadonlyMap<string,
   return `> [!tip]+ 语音\n${body.split("\n").map((line) => line ? `> ${line}` : ">").join("\n")}`;
 }
 
-export function renderMarkdown(file: PlannedNote, plan: ImportPlan): string {
+export function renderMarkdown(file: PlannedNote, plan: ImportPlan, format: "current" | "legacy" = "current"): string {
+  const daily = plan.options.mode === "day";
+  const timed = daily && format === "current";
+  const reserved = new Set<string>();
+  if (timed) {
+    for (const note of file.notes) {
+      for (const text of [note.content, ...note.media.map(({ transcript }) => transcript ?? "")]) {
+        for (const match of text.matchAll(/\^(flomo-\d+)\b/g)) reserved.add(match[1]);
+      }
+    }
+  }
+  let sequence = 0;
+  function timeLine(note: FlomoNote): string {
+    let id: string;
+    do {
+      id = `flomo-${String(++sequence).padStart(4, "0")}`;
+    } while (reserved.has(id));
+    return `${cardTime(note)} ^${id}`;
+  }
   const cards = file.notes.map((note) => [
-    plan.options.mode === "day" ? `# ${noteTitle(note)}` : "",
+    daily ? `# ${noteTitle(note)}` : "",
+    timed ? timeLine(note) : "",
     note.content,
     ...note.media.map((asset) => renderMedia(file, asset, plan.attachmentPaths)),
   ].filter(Boolean).join("\n\n"));

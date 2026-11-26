@@ -109,10 +109,11 @@ export class Importer {
         const markdown = renderMarkdown(file, plan);
         if (await adapter.exists(file.path)) {
           const current = existing && await adapter.read(file.path);
-          // An interrupted batch may already have written this note using the old frontmatter.
-          const legacy = markdown.replace(/^(---\ncreated: [^\n]+\n)type: (?:daily|card_note)\n/, "$1noteType: CardNote\n");
-          if (current !== markdown && current !== legacy) {
-            throw new Error("目标已存在，已保留原文件。");
+          if (current !== markdown) {
+            // An interrupted batch may already have written this note using a previous format.
+            const previous = renderMarkdown(file, plan, "legacy");
+            const legacy = previous.replace(/^(---\ncreated: [^\n]+\n)type: (?:daily|card_note)\n/, "$1noteType: CardNote\n");
+            if (current !== previous && current !== legacy) throw new Error("目标已存在，已保留原文件。");
           }
         } else {
           await this.ensureFolder(parentPath(file.path));
